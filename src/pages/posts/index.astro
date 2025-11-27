@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog');
+posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const colorTokens = {
+  teal: 'var(--accent-teal)',
+  copper: 'var(--accent-copper)',
+  highlight: 'var(--accent-highlight)',
+  cyan: 'var(--core-cyan)',
+  slate: 'var(--neutral-slate)',
+  stone: 'var(--neutral-stone)',
+  bone: 'var(--neutral-bone)',
+  lime: 'var(--core-lime)',
+  sky: 'var(--core-sky)',
+  red: 'var(--core-red)',
+  orange: 'var(--core-orange)',
+  yellow: 'var(--core-yellow)',
+  green: 'var(--core-green)',
+  magenta: 'var(--core-magenta)',
+  violet: 'var(--core-violet)',
+  pink: 'var(--core-pink)',
+  clay: 'var(--core-clay)',
+  'neutral clay': 'var(--neutral-clay)',
+  smoke: 'var(--neutral-smoke)',
+  dusk: 'var(--neutral-dusk)',
+};
+
+const colorFor = (value?: string) => {
+  if (!value) return 'var(--accent-teal)';
+  const key = value.toLowerCase();
+  return colorTokens[key] ?? value;
+};
+---
+
+<BaseLayout title="All Posts - Vestige">
+  <section class="hero" style="padding-bottom:1rem;">
+    <p class="eyebrow">Archive</p>
+    <h1>All posts</h1>
+  </section>
+  <section class="post-grid">
+    {posts.map((post) => (
+      <article class="post-card" style={`border-top: 6px solid ${colorFor(post.data.heroColor)}`}>
+        <p class="post-meta">{post.data.date.toDateString()}</p>
+        <h2>{post.data.title}</h2>
+        <p>{post.data.description}</p>
+        <a class="button" style={`background:${colorFor(post.data.heroColor)}`} href={`/posts/${post.slug}/`}>
+          Read post
+        </a>
+      </article>
+    ))}
+  </section>
+</BaseLayout>

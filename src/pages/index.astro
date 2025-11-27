@@ -1,13 +1,14 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Example from '../content/Example.md';
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<Layout>
-  <div class="content game">
-    <div class="content-background game"></div>
-    <article>
-      <Example />
-    </article>
-  </div>
-</Layout>
+<BaseLayout title="Vestige - Notes & Blog">
+  <section class="hero">
+    <p class="eyebrow">Personal Log</p>
+    <h1>Greetings</h1>
+    <p>
+      Every entry below comes from a Markdown file. Add new files under
+      <code>src/content/blog</code> and they will appear here automatically.
+    </p>
+  </section>
+</BaseLayout>

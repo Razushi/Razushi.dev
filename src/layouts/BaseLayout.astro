@@ -1,0 +1,74 @@
+---
+import '../styles/palette.css';
+
+const { title = 'Vestige', description = 'Personal writing & notes' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+  </head>
+  <body class="site-shell">
+    <header class="site-header">
+      <div class="wrap nav">
+        <div class="brand">Vestige <span>Blog</span></div>
+        <nav class="nav-links">
+          <a href="/">Home</a>
+          <a href="/posts">Posts</a>
+          <a href="/tests">Tests</a>
+          <a href="https://github.com/Razushi" target="_blank" rel="noreferrer">GitHub</a>
+        </nav>
+        <button class="theme-toggle" type="button" id="theme-toggle" aria-label="Change theme">
+          Theme: dark
+        </button>
+      </div>
+    </header>
+    <div class="wrap page-wrap">
+      <slot />
+    </div>
+    <footer class="site-footer">
+      <div class="wrap">&copy; {new Date().getFullYear()} Razushi &middot; Built with Astro + Svelte</div>
+    </footer>
+  </body>
+</html>
+
+<script>
+  const themeOrder = ["dark", "light", "night"];
+  const storageKey = "epithet-theme";
+  const root = document.documentElement;
+  const btn = document.getElementById("theme-toggle");
+
+  const applyTheme = (theme) => {
+    root.dataset.theme = theme;
+    if (btn) {
+      btn.textContent = `Theme: ${theme}`;
+    }
+    try {
+      localStorage.setItem(storageKey, theme);
+    } catch (_err) {
+      /* ignore storage errors */
+    }
+  };
+
+  const stored = (() => {
+    try {
+      return localStorage.getItem(storageKey);
+    } catch (_err) {
+      return null;
+    }
+  })();
+
+  const initial = stored || "dark";
+  applyTheme(initial);
+
+  btn?.addEventListener("click", () => {
+    const current = root.dataset.theme || "dark";
+    const idx = themeOrder.indexOf(current);
+    const next = themeOrder[(idx + 1) % themeOrder.length];
+    applyTheme(next);
+  });
+</script>

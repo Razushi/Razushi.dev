@@ -1,0 +1,103 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PalettePreview from '../components/PalettePreview.svelte';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog');
+posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const colorTokens = {
+  teal: 'var(--accent-teal)',
+  copper: 'var(--accent-copper)',
+  highlight: 'var(--accent-highlight)',
+  cyan: 'var(--core-cyan)',
+  slate: 'var(--neutral-slate)',
+  stone: 'var(--neutral-stone)',
+  bone: 'var(--neutral-bone)',
+  lime: 'var(--core-lime)',
+  sky: 'var(--core-sky)',
+  red: 'var(--core-red)',
+  orange: 'var(--core-orange)',
+  yellow: 'var(--core-yellow)',
+  green: 'var(--core-green)',
+  magenta: 'var(--core-magenta)',
+  violet: 'var(--core-violet)',
+  pink: 'var(--core-pink)',
+  clay: 'var(--core-clay)',
+  'neutral clay': 'var(--neutral-clay)',
+  smoke: 'var(--neutral-smoke)',
+  dusk: 'var(--neutral-dusk)',
+};
+
+const colorFor = (value?: string) => {
+  if (!value) return 'var(--accent-teal)';
+  const key = value.toLowerCase();
+  return colorTokens[key] ?? value;
+};
+
+const coreSwatches = [
+  { name: 'Red', hex: '#d45658' },
+  { name: 'Orange', hex: '#f4a666' },
+  { name: 'Yellow', hex: '#efcc69' },
+  { name: 'Lime', hex: '#76c676' },
+  { name: 'Green', hex: '#7ac85c' },
+  { name: 'Teal', hex: '#3ccfb0' },
+  { name: 'Cyan', hex: '#31a5e9' },
+  { name: 'Sky', hex: '#33a3e3' },
+  { name: 'Violet', hex: '#b58af7' },
+  { name: 'Pink', hex: '#f2c5f0' },
+  { name: 'Magenta', hex: '#d03366' },
+  { name: 'Clay', hex: '#c7876e' },
+];
+
+const neutralSwatches = [
+  { name: 'Stone', hex: '#e4d2a4' },
+  { name: 'Bone', hex: '#d6ccc2' },
+  { name: 'Neutral Clay', hex: '#bcb4a6' },
+  { name: 'Slate', hex: '#545256' },
+  { name: 'Smoke', hex: '#633b3e' },
+  { name: 'Dusk', hex: '#708090' },
+];
+---
+
+<BaseLayout title="Tests - Vestige">
+  <section class="hero" style="padding-bottom:1rem;">
+    <p class="eyebrow">Sandbox</p>
+    <h1>Testbed</h1>
+    <p>Visual spot to exercise components and sections before they hit production.</p>
+  </section>
+
+  <section class="palette-section card-panel">
+    <h2 style="margin-top:0">Palette Preview</h2>
+    <div class="palette-grid">
+      <div class="palette-box">
+        <p class="eyebrow" style="margin-bottom:0.5rem;">Core Rainbow</p>
+        <PalettePreview client:idle swatches={coreSwatches} />
+      </div>
+      <div class="palette-box">
+        <p class="eyebrow" style="margin-bottom:0.5rem;">Neutrals & Accents</p>
+        <PalettePreview client:idle swatches={neutralSwatches} />
+      </div>
+    </div>
+  </section>
+
+  <section class="post-grid">
+    {posts.map((post) => (
+      <article class="post-card" style={`border-top: 6px solid ${colorFor(post.data.heroColor)}`}>
+        <div>
+          <p class="post-meta">{post.data.date.toDateString()}</p>
+          <h2>{post.data.title}</h2>
+          <p>{post.data.description}</p>
+        </div>
+        <div class="tag-list">
+          {(post.data.tags ?? []).map((tag) => (
+            <span class="tag">{tag}</span>
+          ))}
+        </div>
+        <a class="button" style={`background:${colorFor(post.data.heroColor)}`} href={`/posts/${post.slug}/`}>
+          Read
+        </a>
+      </article>
+    ))}
+  </section>
+</BaseLayout>
