@@ -22,8 +22,38 @@ const { title = 'Vestige', description = 'Personal writing & notes' } = Astro.pr
           <a href="/tests">Tests</a>
           <a href="https://github.com/Razushi" target="_blank" rel="noreferrer">GitHub</a>
         </nav>
-        <button class="theme-toggle" type="button" id="theme-toggle" aria-label="Change theme">
-          Theme: dark
+        <button
+          class="theme-toggle"
+          type="button"
+          id="theme-toggle"
+          aria-label="Change theme"
+          data-theme-state="dark"
+        >
+          <svg class="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="12" cy="12" r="4" />
+            <line x1="12" y1="3" x2="12" y2="5" />
+            <line x1="12" y1="19" x2="12" y2="21" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="3" y1="12" x2="5" y2="12" />
+            <line x1="19" y1="12" x2="21" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+          </svg>
+          <svg class="icon icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path
+              d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <svg class="icon icon-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path
+              d="m12 3 2.09 5.74L20 9.27l-4.5 3.9L16.18 19 12 15.98 7.82 19l0.68-5.83L4 9.27l5.91-0.53L12 3Z"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
         </button>
       </div>
     </header>
@@ -45,7 +75,8 @@ const { title = 'Vestige', description = 'Personal writing & notes' } = Astro.pr
   const applyTheme = (theme) => {
     root.dataset.theme = theme;
     if (btn) {
-      btn.textContent = `Theme: ${theme}`;
+      btn.setAttribute("data-theme-state", theme);
+      btn.setAttribute("aria-label", `Change theme (current: ${theme})`);
     }
     try {
       localStorage.setItem(storageKey, theme);

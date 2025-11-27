@@ -7,8 +7,8 @@ const posts = await getCollection('blog');
 posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
 const colorTokens = {
-  teal: 'var(--accent-teal)',
-  copper: 'var(--accent-copper)',
+  teal: 'var(--accent-highlight)',
+  copper: 'var(--accent-highlight)',
   highlight: 'var(--accent-highlight)',
   cyan: 'var(--core-cyan)',
   slate: 'var(--neutral-slate)',
@@ -30,7 +30,7 @@ const colorTokens = {
 };
 
 const colorFor = (value?: string) => {
-  if (!value) return 'var(--accent-teal)';
+  if (!value) return 'var(--accent-highlight)';
   const key = value.toLowerCase();
   return colorTokens[key] ?? value;
 };
