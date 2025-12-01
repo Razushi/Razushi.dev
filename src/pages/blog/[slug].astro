@@ -17,7 +17,18 @@ const formatDate = (d: Date) =>
   d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
 ---
 
-<BaseLayout title={`${post.data.title} | Blog`}>
+<BaseLayout
+  title={`${post.data.title} | Blog`}
+  breadcrumbs={[
+    { label: "Home", href: "/" },
+    { label: "Blog", href: "/blog" },
+    {
+      label: post.data.category ?? "general",
+      href: `/blog/${(post.data.category ?? "general").toLowerCase()}/`,
+    },
+    { label: post.data.title },
+  ]}
+>
   <main class="post-page">
     <header class="post-header">
       <p class="post-date">{formatDate(post.data.date)}</p>
@@ -44,6 +55,24 @@ const formatDate = (d: Date) =>
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
+  }
+
+  .breadcrumb {
+    display: inline-flex;
+    gap: 0.4rem;
+    align-items: center;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+
+  .breadcrumb a {
+    color: var(--accent-highlight);
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
   }
 
   .post-header h1 {

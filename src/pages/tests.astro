@@ -60,7 +60,7 @@ const neutralSwatches = [
 ];
 ---
 
-<BaseLayout title="Vestige | Tests">
+<BaseLayout title="Vestige | Tests" breadcrumbs={[{ label: "Home", href: "/" }, { label: "Tests" }]}>
   <section class="hero" style="padding-bottom:1rem;">
     <h1>Sandbox</h1>
   </section>
@@ -70,7 +70,7 @@ const neutralSwatches = [
     <div class="palette-grid">
       <div class="palette-box">
         <p class="eyebrow" style="margin-bottom:0.5rem;">Core Rainbow</p>
-        <PalettePreview client:idle swatches={coreSwatches} persistAccent={true} />
+        <PalettePreview client:idle swatches={coreSwatches} />
       </div>
       <div class="palette-box">
         <p class="eyebrow" style="margin-bottom:0.5rem;">Neutrals & Accents</p>

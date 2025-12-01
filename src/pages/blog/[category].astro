@@ -29,7 +29,14 @@ const titleCase = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 const categoryName = titleCase(category);
 ---
 
-<BaseLayout title={`${categoryName} | Blog`}>
+<BaseLayout
+  title={`${categoryName} | Blog`}
+  breadcrumbs={[
+    { label: "Home", href: "/" },
+    { label: "Blog", href: "/blog" },
+    { label: categoryName },
+  ]}
+>
   <main class="category-page">
     <header class="page-header">
       <h1>{categoryName}</h1>
@@ -53,6 +60,24 @@ const categoryName = titleCase(category);
     flex-direction: column;
     gap: 1.5rem;
     padding: 1rem 0 2rem;
+  }
+
+  .breadcrumb {
+    display: inline-flex;
+    gap: 0.4rem;
+    align-items: center;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+
+  .breadcrumb a {
+    color: var(--accent-highlight);
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
   }
 
   .page-header h1 {

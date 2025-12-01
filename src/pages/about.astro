@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="Vestige | About">
+<BaseLayout title="Vestige | About" breadcrumbs={[{ label: "Home", href: "/" }, { label: "About" }]}>
   <section class="hero" style="padding-bottom:1rem;">
     <h1>About</h1>
   </section>
