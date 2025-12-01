@@ -31,7 +31,7 @@
   --text-black: #181818;
 
   /* Accent rails - single accent source */
-  --accent-highlight: #ffffff;
+  --accent-highlight: #d45658;
   --accent-teal: var(--accent-highlight);
   --accent-copper: var(--accent-highlight);
   --accent-rose: var(--core-magenta);
@@ -241,10 +241,12 @@ a {
 
 .nav-links a:hover {
   color: var(--accent-highlight);
+  text-decoration: underline; 
 }
 
 .nav-links a.active {
   color: var(--accent-highlight);
+  text-decoration: underline; 
   /* font-weight: 800; */
 }
 
