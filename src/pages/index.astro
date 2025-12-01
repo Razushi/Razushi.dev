@@ -3,12 +3,95 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="Vestige - Notes & Blog">
-  <section class="hero">
-    <p class="eyebrow">Personal Log</p>
-    <h1>Greetings</h1>
-    <p>
-      Every entry below comes from a Markdown file. Add new files under
-      <code>src/content/blog</code> and they will appear here automatically.
-    </p>
+  <section class="landing">
+    <div class="hero-card">
+      <div class="avatar" aria-hidden="true">R</div>
+      <p class="eyebrow">Hey, I'm Razushi</p>
+      <h1>Building, writing, and experimenting.</h1>
+      <p class="lede">
+        I collect builds, notes, and experiments here. Most of what you'll find is about games,
+        colors, and the random tech I'm testing.
+      </p>
+      <div class="cta-row">
+        <a class="ghost-button" href="/posts">Blog posts</a>
+        <a class="ghost-button" href="/about">About me</a>
+      </div>
+    </div>
   </section>
+
+  <style>
+    .landing {
+      min-height: calc(100vh - 80px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      padding: 3rem 1.25rem 1.5rem;
+      text-align: center;
+    }
+
+    .hero-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8rem;
+      max-width: 720px;
+      padding: 0 0.5rem;
+    }
+
+    .avatar {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at 30% 30%, var(--accent-highlight), #2f3a3b);
+      color: var(--bg);
+      font-weight: 800;
+      font-size: 1.4rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--border);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.3rem, 4vw, 2.8rem);
+    }
+
+    .lede {
+      margin: 0;
+      color: var(--muted);
+      max-width: 640px;
+      line-height: 1.7;
+    }
+
+    .cta-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 0.5rem;
+    }
+
+    .ghost-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.6rem 1.1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: transparent;
+      text-decoration: none;
+      font-weight: 700;
+      transition: all var(--transition);
+    }
+
+    .ghost-button:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.06);
+      transform: translateY(-1px);
+    }
+  </style>
 </BaseLayout>
