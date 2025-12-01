@@ -77,13 +77,32 @@ const isActive = (path: string) =>
 <script>
   const themeOrder = ["dark", "light", "night"];
   const storageKey = "epithet-theme";
+  const storageAccentKey = "epithet-accent";
   const root = document.documentElement;
   const btn = document.getElementById("theme-toggle");
   const shell = document.querySelector(".site-shell");
+  const storedAccent = (() => {
+    try {
+      return localStorage.getItem(storageAccentKey);
+    } catch {
+      return null;
+    }
+  })();
+  const defaultAccent =
+    storedAccent ||
+    getComputedStyle(root).getPropertyValue("--accent-highlight").trim() ||
+    "#d45658";
+
+  const applyAccent = (accent) => {
+    root.style.setProperty("--accent-highlight", accent);
+    root.style.setProperty("--accent-teal", accent);
+    root.style.setProperty("--accent-copper", accent);
+  };
 
   const applyTheme = (theme) => {
     root.dataset.theme = theme;
     root.dataset.themeState = theme;
+    applyAccent(storedAccent || defaultAccent);
 
     if (btn) {
       btn.setAttribute("data-theme-state", theme);
@@ -126,4 +145,15 @@ const isActive = (path: string) =>
   window.addEventListener("scroll", updateVignette, { passive: true });
   window.addEventListener("resize", updateVignette);
   updateVignette();
+
+  window.addEventListener("vestige-accent-updated", (event) => {
+    const accent = event.detail?.accent;
+    if (!accent) return;
+    applyAccent(accent);
+    try {
+      localStorage.setItem(storageAccentKey, accent);
+    } catch (_err) {
+      /* ignore storage errors */
+    }
+  });
 </script>

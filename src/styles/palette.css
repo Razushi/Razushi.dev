@@ -31,7 +31,7 @@
   --text-black: #181818;
 
   /* Accent rails - single accent source */
-  --accent-highlight: var(--core-red);
+  --accent-highlight: #ffffff;
   --accent-teal: var(--accent-highlight);
   --accent-copper: var(--accent-highlight);
   --accent-rose: var(--core-magenta);
@@ -235,6 +235,7 @@ a {
   padding: 0.3rem 0.8rem;
   border-radius: var(--radius-sm);
   color: var(--muted);
+  position: relative;
   transition: color var(--transition);
 }
 
@@ -293,10 +294,27 @@ a {
   transition: background var(--transition), border-color var(--transition), transform var(--transition);
 }
 
+.theme-toggle[data-theme-state="light"] {
+  background: rgba(0, 0, 0, 0.00);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.theme-toggle[data-theme-state="dark"],
+.theme-toggle[data-theme-state="night"] {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
 .theme-toggle:hover {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+.theme-toggle[data-theme-state="dark"]:hover,
+.theme-toggle[data-theme-state="night"]:hover {
   background: rgba(255, 255, 255, 0.06);
   border-color: rgba(255, 255, 255, 0.18);
-  transform: translateY(-1px);
 }
 
 .theme-toggle .icon {

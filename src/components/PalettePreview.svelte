@@ -3,11 +3,25 @@
 
   export let swatches: { name: string; hex: string }[] = [];
   const dispatch = createEventDispatcher<{ select: string }>();
+  export let persistAccent = false;
   let selected = swatches[0]?.hex ?? null;
 
   const choose = (hex: string) => {
     selected = hex;
     dispatch('select', hex);
+    if (persistAccent && typeof document !== 'undefined') {
+      try {
+        localStorage.setItem('epithet-accent', hex);
+        // Update accent immediately
+        const root = document.documentElement;
+        root.style.setProperty('--accent-highlight', hex);
+        root.style.setProperty('--accent-teal', hex);
+        root.style.setProperty('--accent-copper', hex);
+        window.dispatchEvent(new CustomEvent('vestige-accent-updated', { detail: { accent: hex } }));
+      } catch (_err) {
+        /* ignore storage errors */
+      }
+    }
   };
 </script>
 
