@@ -1,7 +1,11 @@
 ---
 import '../styles/palette.css';
+import FireIcon from '../components/FireIcon.astro';
 
 const { title = 'Vestige', description = 'Personal writing & notes' } = Astro.props;
+const currentPath = Astro.url.pathname;
+const isActive = (path: string) =>
+  currentPath === path || currentPath.startsWith(`${path}/`);
 ---
 
 <!doctype html>
@@ -15,12 +19,15 @@ const { title = 'Vestige', description = 'Personal writing & notes' } = Astro.pr
   <body class="site-shell">
     <header class="site-header">
       <div class="wrap nav">
-        <div class="brand">Vestige <span>Blog</span></div>
+        <div class="brand">
+          <span><FireIcon /></span>
+          Vestige
+        </div>
         <nav class="nav-links">
-          <a href="/">Home</a>
-          <a href="/posts">Posts</a>
-          <a href="/tests">Tests</a>
-          <a href="/about">About</a>
+          <a class={isActive('/') ? 'active' : ''} href="/">Home</a>
+          <a class={isActive('/posts') ? 'active' : ''} href="/posts">Blog</a>
+          <a class={isActive('/tests') ? 'active' : ''} href="/tests">Tests</a>
+          <a class={isActive('/about') ? 'active' : ''} href="/about">About</a>
           <a href="https://github.com/Razushi" target="_blank" rel="noreferrer">GitHub</a>
         </nav>
         <button
@@ -72,6 +79,7 @@ const { title = 'Vestige', description = 'Personal writing & notes' } = Astro.pr
   const storageKey = "epithet-theme";
   const root = document.documentElement;
   const btn = document.getElementById("theme-toggle");
+  const shell = document.querySelector(".site-shell");
 
   const applyTheme = (theme) => {
     root.dataset.theme = theme;
@@ -103,4 +111,16 @@ const { title = 'Vestige', description = 'Personal writing & notes' } = Astro.pr
     const next = themeOrder[(idx + 1) % themeOrder.length];
     applyTheme(next);
   });
+
+  const updateVignette = () => {
+    if (!shell) return;
+    const scrollY = window.scrollY || window.pageYOffset;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const atBottom = scrollY >= max - 1;
+    shell.classList.toggle("vignette-bottom-hidden", atBottom);
+  };
+
+  window.addEventListener("scroll", updateVignette, { passive: true });
+  window.addEventListener("resize", updateVignette);
+  updateVignette();
 </script>

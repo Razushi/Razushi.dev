@@ -2,15 +2,14 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="Vestige - Notes & Blog">
+<BaseLayout title="Vestige | Notes & Blog">
   <section class="landing">
     <div class="hero-card">
       <div class="avatar" aria-hidden="true">R</div>
-      <p class="eyebrow">Hey, I'm Razushi</p>
-      <h1>Building, writing, and experimenting.</h1>
+      <p class="eyebrow">Greetings.</p>
+      <h1>I use NixOS, btw.</h1>
       <p class="lede">
-        I collect builds, notes, and experiments here. Most of what you'll find is about games,
-        colors, and the random tech I'm testing.
+          Every fleeting skill must be learnt. Every secret must be archived. Such is the burden of the self-proclaimed bearer of intellect.
       </p>
       <div class="cta-row">
         <a class="ghost-button" href="/posts">Blog posts</a>
@@ -21,14 +20,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <style>
     .landing {
-      min-height: calc(100vh - 80px);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 2rem;
-      padding: 3rem 1.25rem 1.5rem;
+      display: grid;
+      place-items: center;
+      padding: 3rem 1.25rem;
       text-align: center;
+      position: relative;
+      flex: 1;
     }
 
     .hero-card {
@@ -72,26 +69,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       flex-wrap: wrap;
       justify-content: center;
       margin-top: 0.5rem;
-    }
-
-    .ghost-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.6rem 1.1rem;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border);
-      color: var(--text);
-      background: transparent;
-      text-decoration: none;
-      font-weight: 700;
-      transition: all var(--transition);
-    }
-
-    .ghost-button:hover {
-      border-color: rgba(255, 255, 255, 0.2);
-      background: rgba(255, 255, 255, 0.06);
-      transform: translateY(-1px);
     }
   </style>
 </BaseLayout>

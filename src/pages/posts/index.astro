@@ -35,10 +35,10 @@ const colorFor = (value?: string) => {
 };
 ---
 
-<BaseLayout title="All Posts - Vestige">
+<BaseLayout title="Vestige | Blog">
   <section class="hero" style="padding-bottom:1rem;">
+    <h1>All blog</h1>
     <p class="eyebrow">Archive</p>
-    <h1>All posts</h1>
   </section>
   <section class="post-grid">
     {posts.map((post) => (
@@ -48,7 +48,7 @@ const colorFor = (value?: string) => {
           <h2>{post.data.title}</h2>
           <p>{post.data.description}</p>
         </div>
-        <a class="button" style={`background:${colorFor(post.data.heroColor)}`} href={`/posts/${post.slug}/`}>
+        <a class="ghost-button" href={`/posts/${post.slug}/`}>
           Read post
         </a>
       </article>
