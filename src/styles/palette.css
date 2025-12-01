@@ -44,7 +44,7 @@
   --card-padding: 1.5rem;
   --shader-color: rgba(0, 0, 0, 0.4);
   --vignette-color: var(--shader-color);
-  --vignette-size: 70px;
+  --vignette-size: 140px;
   --wrap-width: min(900px, 62vw, 88vw);
 }
 
@@ -235,19 +235,18 @@ a {
   padding: 0.3rem 0.8rem;
   border-radius: var(--radius-sm);
   color: var(--muted);
-  position: relative;
   transition: color var(--transition);
 }
 
 .nav-links a:hover {
   color: var(--accent-highlight);
-  text-decoration: underline; 
+
+  
 }
 
 .nav-links a.active {
   color: var(--accent-highlight);
   text-decoration: underline; 
-  /* font-weight: 800; */
 }
 
 .ghost-button {
