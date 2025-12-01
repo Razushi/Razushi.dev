@@ -83,6 +83,8 @@ const isActive = (path: string) =>
 
   const applyTheme = (theme) => {
     root.dataset.theme = theme;
+    root.dataset.themeState = theme;
+
     if (btn) {
       btn.setAttribute("data-theme-state", theme);
       btn.setAttribute("aria-label", `Change theme (current: ${theme})`);
@@ -107,7 +109,8 @@ const isActive = (path: string) =>
 
   btn?.addEventListener("click", () => {
     const current = root.dataset.theme || "dark";
-    const idx = themeOrder.indexOf(current);
+    const currentState = btn.getAttribute("data-theme-state") || current;
+    const idx = themeOrder.indexOf(currentState);
     const next = themeOrder[(idx + 1) % themeOrder.length];
     applyTheme(next);
   });
