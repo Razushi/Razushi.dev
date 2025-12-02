@@ -25,8 +25,7 @@ posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 const formatDate = (d: Date) =>
   d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: '2-digit' });
 
-const titleCase = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-const categoryName = titleCase(category);
+const categoryName = category.toUpperCase();
 ---
 
 <BaseLayout
@@ -39,7 +38,7 @@ const categoryName = titleCase(category);
 >
   <main class="category-page">
     <header class="page-header">
-      <h1>{categoryName}</h1>
+      <h1 class="caps">{categoryName}</h1>
       <p class="lede">All posts filed under {categoryName}.</p>
     </header>
 

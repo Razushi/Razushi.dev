@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech&display=swap');
+
 :root {
   /* Core palette */
   --core-red: #d45658;
@@ -167,6 +169,12 @@ a {
 
 h1 {
   text-transform: capitalize;
+  font-family: 'Share Tech', 'Geist Mono', 'FiraCode', 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.caps {
+  text-transform: uppercase;
+  font-family: 'Share Tech', 'Geist Mono', 'FiraCode', 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 .blog-index {
@@ -211,7 +219,31 @@ h1 {
 
 .category-heading h2 {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: 26px;
+  font-family: 'Share Tech', 'Geist Mono', 'FiraCode', 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.category-banner {
+  display: block;
+  padding: 0.85rem 1rem;
+  background: var(--secondary-highlight);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  color: var(--text);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+  transition: background var(--transition), border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+}
+
+.category-banner h2 {
+  margin: 0;
+}
+
+.category-banner:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.3);
 }
 
 .view-all {
@@ -328,12 +360,23 @@ h1 {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  color: var(--text);
+  text-decoration: none;
 }
 
 .brand span {
   color: var(--accent-highlight);
   font-weight: 800;
   font-size: 1.05rem;
+}
+
+.brand:hover {
+  color: var(--accent-highlight);
+}
+
+.brand.active {
+  color: var(--accent-highlight);
+  text-decoration: underline;
 }
 
 .nav-links {
@@ -454,7 +497,9 @@ h1 {
 }
 
 .hero {
-  padding: 1rem 0 1rem;
+  padding: 1.5rem 0 1.5rem;
+  display: grid;
+  align-items: center;
 }
 
 .eyebrow {
@@ -467,7 +512,7 @@ h1 {
 
 .hero h1 {
   font-size: clamp(2.5rem, 6vw, 3.75rem);
-  margin: 0.4rem 0 1rem;
+  margin: 0;
 }
 
 .hero p {

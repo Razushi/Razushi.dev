@@ -14,6 +14,7 @@ const {
 }: { title?: string; description?: string; breadcrumbs?: Crumb[] } = Astro.props;
 
 const currentPath = Astro.url.pathname;
+const isHome = currentPath === '/';
 const isActive = (path: string) =>
   currentPath === path || currentPath.startsWith(`${path}/`);
 ---
@@ -29,7 +30,7 @@ const isActive = (path: string) =>
   <body class="site-shell">
     <header class="site-header">
       <div class="wrap nav">
-        <a class="brand" href="/">
+        <a class={`brand ${isHome ? 'active' : ''}`} href="/">
           <span><FireIcon /></span>
           Vestige
         </a>

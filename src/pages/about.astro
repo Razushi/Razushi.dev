@@ -3,8 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="Vestige | About" breadcrumbs={[{ label: "Home", href: "/" }, { label: "About" }]}>
-  <section class="hero" style="padding-bottom:1rem;">
-    <h1>About</h1>
+  <section class="hero">
+    <h1 class="caps">About</h1>
   </section>
   <section class="card-panel about-card">
     <h2 style="margin-top:0">Notes on how and why I run things the way I do.</h2>
@@ -51,6 +51,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     .about-card .prose {
       max-width: 100%;
+      width: 100%;
+      margin: 0;
     }
 
     .about-card p {
