@@ -140,6 +140,11 @@ a {
   visibility: hidden;
 }
 
+.site-shell.page-blog::before,
+.site-shell.page-blog::after {
+  display: none;
+}
+
 .breadcrumb {
   display: inline-flex;
   gap: 0.5rem;
@@ -208,6 +213,11 @@ h1 {
   padding-bottom: 1rem;
 }
 
+.category-block:last-of-type {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
 .category-heading {
   display: flex;
   flex-wrap: wrap;
@@ -255,7 +265,6 @@ h1 {
   color: var(--accent-highlight);
   border-color: rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.45);
 }
 
 .view-all {
@@ -404,7 +413,8 @@ h1 {
   text-decoration: none;
   padding: 0.3rem 0.8rem;
   border-radius: var(--radius-sm);
-  color: var(--muted);
+  color: var(--text);
+  font-weight: 600;
   transition: color var(--transition);
 }
 
@@ -465,13 +475,13 @@ h1 {
   transition: background var(--transition), border-color var(--transition), transform var(--transition);
 }
 
-.theme-toggle[data-theme-state="light"] {
+[data-theme="light"] .theme-toggle {
   background: rgba(0, 0, 0, 0.00);
   border-color: rgba(0, 0, 0, 0.15);
 }
 
-.theme-toggle[data-theme-state="dark"],
-.theme-toggle[data-theme-state="night"] {
+[data-theme="dark"] .theme-toggle,
+[data-theme="night"] .theme-toggle {
   background: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.12);
 }
@@ -482,8 +492,8 @@ h1 {
   transform: translateY(-1px);
 }
 
-.theme-toggle[data-theme-state="dark"]:hover,
-.theme-toggle[data-theme-state="night"]:hover {
+[data-theme="dark"] .theme-toggle:hover,
+[data-theme="night"] .theme-toggle:hover {
   background: rgba(255, 255, 255, 0.06);
   border-color: rgba(255, 255, 255, 0.18);
 }
@@ -496,15 +506,15 @@ h1 {
   stroke-linejoin: round;
 }
 
-.theme-toggle[data-theme-state="light"] .icon-sun {
+[data-theme="light"] .theme-toggle .icon-sun {
   display: block;
 }
 
-.theme-toggle[data-theme-state="dark"] .icon-moon {
+[data-theme="dark"] .theme-toggle .icon-moon {
   display: block;
 }
 
-.theme-toggle[data-theme-state="night"] .icon-star {
+[data-theme="night"] .theme-toggle .icon-star {
   display: block;
 }
 

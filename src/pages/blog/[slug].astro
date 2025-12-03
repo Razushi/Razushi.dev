@@ -13,6 +13,20 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await post.render();
 
+const normalizeCategory = (value?: string) => {
+  const raw = (value ?? '').toString().trim();
+  const base = raw || 'general';
+  const slug =
+    base
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'general';
+  const label = base.charAt(0).toUpperCase() + base.slice(1).toLowerCase();
+  return { slug, label };
+};
+
+const { slug: categorySlug, label: categoryLabel } = normalizeCategory(post.data.category);
+
 const formatDate = (d: Date) =>
   d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
 ---
@@ -23,8 +37,8 @@ const formatDate = (d: Date) =>
     { label: "Home", href: "/" },
     { label: "Blog", href: "/blog" },
     {
-      label: post.data.category ?? "general",
-      href: `/blog/${(post.data.category ?? "general").toLowerCase()}/`,
+      label: categoryLabel,
+      href: `/blog/${categorySlug}/`,
     },
     { label: post.data.title },
   ]}

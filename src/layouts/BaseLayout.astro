@@ -11,7 +11,9 @@ const {
   title = 'Vestige',
   description = 'Personal writing & notes',
   breadcrumbs = [],
-}: { title?: string; description?: string; breadcrumbs?: Crumb[] } = Astro.props;
+  pageId = '',
+}: { title?: string; description?: string; breadcrumbs?: Crumb[]; pageId?: string } =
+  Astro.props;
 
 const currentPath = Astro.url.pathname;
 const isHome = currentPath === '/';
@@ -20,14 +22,49 @@ const isActive = (path: string) =>
 ---
 
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en">
   <head>
+    <script is:inline>
+      (() => {
+        const storageKey = "epithet-theme";
+        const storageAccentKey = "epithet-accent";
+        const root = document.documentElement;
+        const safeGet = (key) => {
+          try {
+            return localStorage.getItem(key);
+          } catch {
+            return null;
+          }
+        };
+        const storedTheme = safeGet(storageKey);
+        const theme = storedTheme || "dark";
+        root.setAttribute("data-theme", theme);
+        root.setAttribute("data-theme-state", theme);
+        root.style.colorScheme = theme === "light" ? "light" : "dark";
+
+        const storedAccent = safeGet(storageAccentKey);
+        if (storedAccent) {
+          root.style.setProperty("--accent-highlight", storedAccent);
+          root.style.setProperty("--accent-teal", storedAccent);
+          root.style.setProperty("--accent-copper", storedAccent);
+        }
+
+        // expose for later scripts and set the toggle state as soon as DOM is ready
+        window.__vestigeTheme = { theme, accent: storedAccent };
+        document.addEventListener("DOMContentLoaded", () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          btn.setAttribute("data-theme-state", theme);
+          btn.setAttribute("aria-label", `Change theme (current: ${theme})`);
+        });
+      })();
+    </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
   </head>
-  <body class="site-shell">
+  <body class={`site-shell vignette-bottom-hidden ${pageId ? pageId : ''}`}>
     <header class="site-header">
       <div class="wrap nav">
         <a class={`brand ${isHome ? 'active' : ''}`} href="/">
@@ -45,7 +82,6 @@ const isActive = (path: string) =>
           type="button"
           id="theme-toggle"
           aria-label="Change theme"
-          data-theme-state="dark"
         >
           <svg class="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <circle cx="12" cy="12" r="4" />
@@ -144,14 +180,7 @@ const isActive = (path: string) =>
     }
   };
 
-  const stored = (() => {
-    try {
-      return localStorage.getItem(storageKey);
-    } catch (_err) {
-      return null;
-    }
-  })();
-
+  const stored = window.__vestigeTheme?.theme;
   const initial = stored || "dark";
   applyTheme(initial);
 
@@ -167,8 +196,8 @@ const isActive = (path: string) =>
     if (!shell) return;
     const scrollY = window.scrollY || window.pageYOffset;
     const max = document.documentElement.scrollHeight - window.innerHeight;
-    const atBottom = scrollY >= max - 1;
-    shell.classList.toggle("vignette-bottom-hidden", atBottom);
+    const hasMore = scrollY < max - 1;
+    shell.classList.toggle("vignette-bottom-hidden", !hasMore);
   };
 
   window.addEventListener("scroll", updateVignette, { passive: true });

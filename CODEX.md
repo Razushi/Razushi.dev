@@ -49,7 +49,7 @@ Internal guide to the Vestige site: stack, routing, theming, and how to extend i
   - LocalStorage keys: `epithet-theme` (theme), `epithet-accent` (accent color, if set elsewhere).
   - Applies CSS variables `--accent-highlight`, `--accent-teal`, `--accent-copper` to the chosen accent; default is the CSS value of `--accent-highlight`.
   - Sets `data-theme` on `<html>` and `data-theme-state` on the toggle for icon switching (sun/moon/star).
-- Vignette effect: `.site-shell` adds gradient overlays at the bottom; JS toggles `vignette-bottom-hidden` when scrolled to the end.
+- Vignette effect: `.site-shell` adds gradient overlays at the bottom; JS toggles `vignette-bottom-hidden` when scrolled to the end. Pages can pass `pageId` to `BaseLayout` to add a body class (e.g., `/blog` uses `page-blog` to disable the vignette).
 - Hero sections (`.hero`) use a grid with vertical centering; inline padding on hero sections was removed and is managed in CSS.
 
 ## Theming & Styles (`src/styles/palette.css`)
@@ -73,7 +73,7 @@ Internal guide to the Vestige site: stack, routing, theming, and how to extend i
 - `/` (`src/pages/index.astro`): Centered hero card with avatar circle, tagline, and CTA buttons to `/blog` and `/about`.
 - `/blog` (`blog/index.astro`): Fetches all posts, groups by `category` (default `general`), sorted newest-first. Categories are normalized case-insensitively, displayed uppercase, and the banner itself links to the category page; banner now uses a dark strip with an accent left bar, subtle gradient, and hover lift/shadow; each block lists date/title pairs.
 - `/blog/[slug]`: Renders a single post with breadcrumbs: Home → Blog → Category → Title. Shows formatted date and tags, then Markdown content via `<Content />`.
-- `/blog/[category]`: Static paths generated from existing categories (case-insensitive matching). Displays the category name uppercased and lists posts in that category with dates and titles.
+- `/blog/[category]`: Static paths generated from existing categories (case-insensitive with slugification). Displays the category name title-cased and lists posts in that category with dates and titles.
 - `/posts`: Alternate archive grid. Each card uses `heroColor` (or a mapped token name) for a 6px top border and CTA button color; shows date, title, description.
 - `/posts/[slug]`: Simple prose layout with eyebrow date, tags, content, and a “Back to posts” button.
 - `/about`: Static profile/career writeup inside a `card-panel`.

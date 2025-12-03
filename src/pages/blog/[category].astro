@@ -5,7 +5,12 @@ import { getCollection } from 'astro:content';
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
   const categories = Array.from(
-    new Set(posts.map((p) => (p.data.category ?? 'general').toLowerCase())),
+    new Set(
+      posts.map((p) => {
+        const raw = (p.data.category ?? '').toString().trim();
+        return (raw || 'general').toLowerCase();
+      }),
+    ),
   );
   return categories.map((category) => ({
     params: { category },
@@ -17,15 +22,25 @@ if (!category) {
   throw new Error('Category missing');
 }
 
+const categoryKey = (category ?? 'general').toString().trim().toLowerCase();
+
 const posts = (await getCollection('blog')).filter(
-  (p) => (p.data.category ?? 'general').toLowerCase() === category.toLowerCase(),
+  (p) => {
+    const raw = (p.data.category ?? '').toString().trim();
+    return (raw || 'general').toLowerCase() === categoryKey;
+  },
 );
 posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-const formatDate = (d: Date) =>
-  d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: '2-digit' });
+const formatDate = (d: Date) => {
+  const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 10); // yyyy-mm-dd
+};
 
-const categoryName = category.toUpperCase();
+const categoryName = category
+  .split(' ')
+  .map((w) => (w ? w.charAt(0).toUpperCase() + w.slice(1).toLowerCase() : ''))
+  .join(' ');
 ---
 
 <BaseLayout
