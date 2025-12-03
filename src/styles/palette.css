@@ -225,14 +225,14 @@ h1 {
 
 .category-banner {
   display: block;
-  padding: 0.85rem 1rem;
-  background: var(--secondary-highlight);
+  padding-left: 0.6rem;
+  background: var(--secondary);
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-bottom: 4px solid var(--accent-highlight);
+  border-radius: 0;
   text-decoration: none;
   color: var(--text);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
-  transition: background var(--transition), border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+  transition: background var(--transition), border-color var(--transition), border-bottom-color var(--transition), transform var(--transition);
 }
 
 .category-banner h2 {
@@ -240,10 +240,10 @@ h1 {
 }
 
 .category-banner:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--secondary-highlight);
   border-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
-  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.3);
+  border-bottom-color: var(--accent-highlight);
+  transform: translateY(-1px);
 }
 
 .view-all {
