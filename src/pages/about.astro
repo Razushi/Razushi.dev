@@ -2,61 +2,20 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="Vestige | About" breadcrumbs={[{ label: "Home", href: "/" }, { label: "About" }]}>
+<BaseLayout title="Vestige | About" breadcrumbs={[{ label: "Home", href: "/" }, { label: "About" }]} pageId="page-about">
   <section class="hero">
     <h1 class="caps">About</h1>
   </section>
-  <section class="card-panel about-card">
-    <h2 style="margin-top:0">Notes on how and why I run things the way I do.</h2>
+  <section>
+    <h2 style="margin-top:0">如果意识不干预，身体的行为表现为可预测的退相。</h2>
     <article class="prose">
       <p>
-        I work with the parts of computing most people never see: Linux systems administration,
-        networking, virtualisation, and general systems engineering. I run NixOS across multiple
-        machines with reproducible configs, custom modules, and a consistent toolchain everywhere.
+        I've seen your kind, time and time again. Every fleeting skill must be learnt. Every secret must be archived. Such is the burden of the self-proclaimed bearer of intellect. But in the end, few have the resolve for the path you carve, consumes.
       </p>
-
       <p>
-        I’m finishing my IT degree at UTS. Most of my study and work is around Linux, cloud
-        infrastructure, distributed systems, and automation. I’ve built Kubernetes prototypes, local
-        video-processing pipelines, DNS/DHCP lab networks, and platform setups using Docker, MinIO,
-        Kafka, and related tools. I’ve also worked in Windows–Linux hybrid environments (Windows
-        Server, CentOS Stream, VMware).
-      </p>
-
-      <p>
-        Outside of infrastructure, I write code when needed—mostly C++, C#, and Java—to build tools,
-        automate workflows, or support the systems I run. I like minimal abstractions and configs I
-        can reproduce exactly.
-      </p>
-
-      <p>
-        Beyond tech I spend time in Blender for 3D, take photos, and keep structured documentation
-        systems. I also read Chinese web fiction and cook, usually Chinese dishes from Yunnan or
-        nearby regions.
-      </p>
-
-      <p>
-        This site is where I store notes, write-ups, and reference material. It’s primarily for me,
-        but it’s public in case it’s useful to someone else.
+        Let knowledge serve only man, and let that which does not remain in darkness.
       </p>
     </article>
   </section>
 
-  <style>
-    .about-card {
-      max-width: 900px;
-      margin: 0 auto 3rem;
-      padding: var(--card-padding);
-    }
-
-    .about-card .prose {
-      max-width: 100%;
-      width: 100%;
-      margin: 0;
-    }
-
-    .about-card p {
-      margin-bottom: 1rem;
-    }
-  </style>
 </BaseLayout>

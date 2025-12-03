@@ -141,7 +141,9 @@ a {
 }
 
 .site-shell.page-blog::before,
-.site-shell.page-blog::after {
+.site-shell.page-blog::after,
+.site-shell.page-about::before,
+.site-shell.page-about::after {
   display: none;
 }
 
