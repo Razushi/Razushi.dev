@@ -71,7 +71,7 @@ Internal guide to the Vestige site: stack, routing, theming, and how to extend i
 
 ## Pages & Routing
 - `/` (`src/pages/index.astro`): Centered hero card with avatar circle, tagline, and CTA buttons to `/blog` and `/about`.
-- `/blog` (`blog/index.astro`): Fetches all posts, groups by `category` (default `general`), sorted newest-first. Categories are normalized case-insensitively, displayed uppercase, and the banner itself links to the category page; banner uses a low-profile strip with accent bottom border, squared corners, and a tight 0.6rem left inset; each block lists date/title pairs.
+- `/blog` (`blog/index.astro`): Fetches all posts, groups by `category` (default `general`), sorted newest-first. Categories are normalized case-insensitively, displayed uppercase, and the banner itself links to the category page; banner now uses a dark strip with an accent left bar, subtle gradient, and hover lift/shadow; each block lists date/title pairs.
 - `/blog/[slug]`: Renders a single post with breadcrumbs: Home → Blog → Category → Title. Shows formatted date and tags, then Markdown content via `<Content />`.
 - `/blog/[category]`: Static paths generated from existing categories (case-insensitive matching). Displays the category name uppercased and lists posts in that category with dates and titles.
 - `/posts`: Alternate archive grid. Each card uses `heroColor` (or a mapped token name) for a 6px top border and CTA button color; shows date, title, description.

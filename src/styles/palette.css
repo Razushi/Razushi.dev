@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech&display=swap');
-
 :root {
   /* Core palette */
   --core-red: #d45658;
@@ -169,19 +167,19 @@ a {
 
 h1 {
   text-transform: capitalize;
-  font-family: 'Share Tech', 'Geist Mono', 'FiraCode', 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 .caps {
   text-transform: uppercase;
   font-family: 'Share Tech', 'Geist Mono', 'FiraCode', 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+  letter-spacing: 0.08em;
 }
 
 .blog-index {
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  padding: 1rem 0 2rem;
+  padding: 0;
 }
 
 .blog-index .hero {
@@ -219,31 +217,45 @@ h1 {
 
 .category-heading h2 {
   margin: 0;
-  font-size: 26px;
-  font-family: 'Share Tech', 'Geist Mono', 'FiraCode', 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 1.2rem;
 }
 
 .category-banner {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   padding-left: 0.6rem;
-  background: var(--secondary);
-  border: 1px solid var(--border);
-  border-bottom: 4px solid var(--accent-highlight);
-  border-radius: 0;
   text-decoration: none;
   color: var(--text);
-  transition: background var(--transition), border-color var(--transition), border-bottom-color var(--transition), transform var(--transition);
+  position: relative;
+  border: none;
+  background: none;
+  box-shadow: none;
+  overflow: hidden;
+  transition: transform var(--transition), color var(--transition);
+}
+
+.category-banner::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  background: var(--accent-highlight);
 }
 
 .category-banner h2 {
   margin: 0;
+  padding-left: 0.35rem;
+  letter-spacing: 0.08em;
 }
 
 .category-banner:hover {
-  background: var(--secondary-highlight);
+  color: var(--accent-highlight);
   border-color: rgba(255, 255, 255, 0.2);
-  border-bottom-color: var(--accent-highlight);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.45);
 }
 
 .view-all {
@@ -497,9 +509,7 @@ h1 {
 }
 
 .hero {
-  padding: 1.5rem 0 1.5rem;
-  display: grid;
-  align-items: center;
+  padding: 1rem 0 1rem;
 }
 
 .eyebrow {
@@ -512,7 +522,7 @@ h1 {
 
 .hero h1 {
   font-size: clamp(2.5rem, 6vw, 3.75rem);
-  margin: 0;
+  margin: 0.4rem 0 1rem;
 }
 
 .hero p {
