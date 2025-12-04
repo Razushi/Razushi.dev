@@ -35,8 +35,12 @@ const normalizeCategory = (value?: string) => {
 
 const { slug: categorySlug, label: categoryLabel } = normalizeCategory(post.data.category);
 
-const formatDate = (d: Date) =>
-  d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+const formatDate = (d: Date) => {
+  const year = d.getFullYear();
+  const month = d.toLocaleString('default', { month: 'long' });
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year} ${month} ${day}`;
+};
 ---
 
 <BaseLayout
@@ -101,15 +105,17 @@ const formatDate = (d: Date) =>
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
+    padding: var(--card-padding) 0;
   }
 
   .post-title-hero {
     margin: 0;
-    font-size: clamp(2.8rem, 6vw, 3.4rem);
-    letter-spacing: 0.04em;
-    font-weight: 800;
+    font-size: clamp(2.5rem, 6vw, 3.75rem);
+    letter-spacing: 0.08em;
     text-transform: none;
-    padding: var(--card-padding) 0 var(--card-padding);
+    line-height: 1.1;
+    font-family: 'Share Tech', 'Geist Mono', 'FiraCode', 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+    padding: 0;
   }
 
   .post-meta {
@@ -118,7 +124,7 @@ const formatDate = (d: Date) =>
     justify-content: space-between;
     gap: 1rem;
     flex-wrap: wrap;
-    padding: 0 0 var(--card-padding);
+    padding: var(--card-padding) 0 var(--card-padding);
     border-bottom: 1px solid var(--border);
   }
 

@@ -1,8 +1,8 @@
 ---
-title: "Estus is sunny D"
+title: "Helpistol is a great crowd control tool"
 description: "Boss order, bonfire splits, and gear picks for casual and speed runs."
 date: "2025-01-12"
-category: "Dark Souls"
+category: "GTFO"
 tags:
   - dark souls 3
   - routes
