@@ -1,5 +1,5 @@
 ---
-title: "Sunlight spear"
+title: "Sunlight Spear? Sunlight Spear."
 description: "Boss order, bonfire splits, and gear picks for casual and speed runs."
 date: "2025-09-15"
 category: "Dark Souls"

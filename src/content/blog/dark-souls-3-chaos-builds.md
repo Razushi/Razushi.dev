@@ -1,5 +1,5 @@
 ---
-title: "Dark Souls 3 Chaos Builds"
+title: "Chaos Builds"
 description: "Boss order, bonfire splits, and gear picks for casual and speed runs."
 date: "2025-07-23"
 category: "Dark Souls 2"

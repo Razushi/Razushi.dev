@@ -1,5 +1,5 @@
 ---
-title: "Dark Notes"
+title: "Dark Build scalings"
 description: "Boss order, bonfire splits, and gear picks for casual and speed runs."
 date: "2025-03-15"
 category: "Dark Souls"

@@ -1,5 +1,5 @@
 ---
-title: "Prime Hunt Checklist"
+title: "Begrineer gear checklist"
 date: "2025-03-12"
 category: "Warframe"
 tags: ["warframe", "farming", "prime"]

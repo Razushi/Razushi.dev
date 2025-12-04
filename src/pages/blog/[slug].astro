@@ -52,18 +52,19 @@ const formatDate = (d: Date) =>
   ]}
 >
   <main class="post-page">
-    <header class="post-header">
-      <p class="post-date">{formatDate(post.data.date)}</p>
-      <h1>{post.data.title}</h1>
-      {post.data.tags && post.data.tags.length > 0 && (
-        <div class="tag-row">
-          {post.data.tags.map((tag) => (
-            <span class="tag">{tag}</span>
-          ))}
-        </div>
-      )}
-      <hr />
-    </header>
+    <section class="post-hero">
+      <h1 class="post-title-hero">{post.data.title}</h1>
+      <div class="post-meta">
+        <p class="post-date">{formatDate(post.data.date)}</p>
+        {post.data.tags && post.data.tags.length > 0 && (
+          <div class="tag-row">
+            {post.data.tags.map((tag) => (
+              <span class="tag">{tag}</span>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
 
     <article class="prose-content">
       <Content />
@@ -73,7 +74,6 @@ const formatDate = (d: Date) =>
 
 <style>
   .post-page {
-    padding: 1rem 0 3rem;
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
@@ -97,9 +97,29 @@ const formatDate = (d: Date) =>
     text-decoration: underline;
   }
 
-  .post-header h1 {
-    margin: 0.2rem 0 0.5rem;
-    font-size: clamp(2rem, 4vw, 2.8rem);
+  .post-hero {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .post-title-hero {
+    margin: 0;
+    font-size: clamp(2.8rem, 6vw, 3.4rem);
+    letter-spacing: 0.04em;
+    font-weight: 800;
+    text-transform: none;
+    padding: var(--card-padding) 0 var(--card-padding);
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 0 0 var(--card-padding);
+    border-bottom: 1px solid var(--border);
   }
 
   .post-date {
@@ -112,7 +132,10 @@ const formatDate = (d: Date) =>
     display: flex;
     gap: 0.4rem;
     flex-wrap: wrap;
-    margin: 0.3rem 0 0.6rem;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 0;
+    flex: 1 1 auto;
   }
 
   .tag {
@@ -121,12 +144,6 @@ const formatDate = (d: Date) =>
     border: 1px solid var(--border);
     color: var(--muted);
     font-size: 0.85rem;
-  }
-
-  hr {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 0.5rem 0 0;
   }
 
   .prose-content {

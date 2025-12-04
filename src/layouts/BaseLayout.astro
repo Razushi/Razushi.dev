@@ -111,26 +111,28 @@ const isActive = (path: string) =>
       </div>
     </header>
     <div class="wrap page-wrap">
-      {breadcrumbs.length > 0 && (
-        <nav class="breadcrumb" aria-label="Breadcrumb">
-          {
-            breadcrumbs.map((crumb, index) => {
-              const isLast = index === breadcrumbs.length - 1;
-              return (
-                <>
-                  {crumb.href && !isLast ? (
-                    <a href={crumb.href}>{crumb.label}</a>
-                  ) : (
-                    <span class={isLast ? 'current' : ''}>{crumb.label}</span>
-                  )}
-                  {!isLast && <span aria-hidden="true">/</span>}
-                </>
-              );
-            })
-          }
-        </nav>
-      )}
-      <slot />
+      <div class="card-panel content-panel">
+        {breadcrumbs.length > 0 && (
+          <nav class="breadcrumb" aria-label="Breadcrumb">
+            {
+              breadcrumbs.map((crumb, index) => {
+                const isLast = index === breadcrumbs.length - 1;
+                return (
+                  <>
+                    {crumb.href && !isLast ? (
+                      <a href={crumb.href}>{crumb.label}</a>
+                    ) : (
+                      <span class={isLast ? 'current' : ''}>{crumb.label}</span>
+                    )}
+                    {!isLast && <span aria-hidden="true">/</span>}
+                  </>
+                );
+              })
+            }
+          </nav>
+        )}
+        <slot />
+      </div>
     </div>
     <footer class="site-footer">
       <div class="wrap footer-bar">

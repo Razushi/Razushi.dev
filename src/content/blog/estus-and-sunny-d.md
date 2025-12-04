@@ -1,5 +1,5 @@
 ---
-title: "Estus and sunny D"
+title: "Estus is sunny D"
 description: "Boss order, bonfire splits, and gear picks for casual and speed runs."
 date: "2025-01-12"
 category: "Dark Souls"

@@ -1,5 +1,5 @@
 ---
-title: "Holy Lothric Knight Sword"
+title: "Holy Lothric Knight Sword My Beloved"
 description: "Boss order, bonfire splits, and gear picks for casual and speed runs."
 date: "2025-06-06"
 category: "Dark Souls"
