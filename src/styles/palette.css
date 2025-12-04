@@ -40,7 +40,9 @@
   --radius-lg: 6px;
   --radius-md: 6px;
   --radius-sm: 6px;
-  --transition: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-duration: 200ms;
+  --transition-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition: var(--transition-duration) var(--transition-ease);
   --card-padding: 1.5rem;
   --shader-color: rgba(0, 0, 0, 0.4);
   --vignette-color: var(--shader-color);
@@ -98,6 +100,7 @@ body {
   background: var(--bg);
   color: var(--text);
   min-height: 100%;
+  transition: background-color var(--transition), color var(--transition);
 }
 
 a {
@@ -321,6 +324,7 @@ h1 {
   left: 0;
   right: 0;
   z-index: 20;
+  transition: background-color var(--transition), color var(--transition), border-color var(--transition);
 }
 
 .site-header {
@@ -340,9 +344,53 @@ h1 {
 }
 
 .site-footer .wrap {
-  text-align: center;
   border-top: 1px solid var(--border);
   padding: 1rem 0;
+}
+
+.footer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.footer-text {
+  text-align: center;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.footer-link {
+  color: var(--text);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  transition: color var(--transition);
+}
+
+.footer-link:hover {
+  color: var(--accent-highlight);
+}
+
+.footer-icon {
+  width: 1.35rem;
+  height: 1.35rem;
+  stroke-width: 1.8;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .wrap {
@@ -474,7 +522,9 @@ h1 {
   color: var(--text);
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: background var(--transition), border-color var(--transition), transform var(--transition);
+  transition: background var(--transition), border-color var(--transition), color var(--transition), transform var(--transition);
+  position: relative;
+  overflow: hidden;
 }
 
 [data-theme="light"] .theme-toggle {
@@ -501,23 +551,35 @@ h1 {
 }
 
 .theme-toggle .icon {
+  position: absolute;
+  inset: 0;
+  margin: auto;
   width: 1.6rem;
   height: 1.6rem;
-  display: none;
+  opacity: 0;
+  transform: scale(0.8);
   stroke-linecap: round;
   stroke-linejoin: round;
+  transition: opacity var(--transition), transform var(--transition);
+  pointer-events: none;
 }
 
+.theme-toggle[data-theme-state="light"] .icon-sun,
 [data-theme="light"] .theme-toggle .icon-sun {
-  display: block;
+  opacity: 1;
+  transform: scale(1);
 }
 
+.theme-toggle[data-theme-state="dark"] .icon-moon,
 [data-theme="dark"] .theme-toggle .icon-moon {
-  display: block;
+  opacity: 1;
+  transform: scale(1);
 }
 
+.theme-toggle[data-theme-state="night"] .icon-star,
 [data-theme="night"] .theme-toggle .icon-star {
-  display: block;
+  opacity: 1;
+  transform: scale(1.1);
 }
 
 .hero {
