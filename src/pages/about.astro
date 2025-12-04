@@ -1,8 +1,13 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<BaseLayout title="Vestige | About" breadcrumbs={[{ label: "Home", href: "/" }, { label: "About" }]} pageId="page-about">
+<BaseLayout
+  title="Vestige | About"
+  breadcrumbs={[{ label: "Home", href: "/" }, { label: "About" }]}
+  pageId="page-about"
+  stickyFooter={true}
+>
   <section class="hero">
     <h1 class="caps">About</h1>
   </section>
@@ -10,12 +15,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <h2 style="margin-top:0">如果意识不干预，身体的行为表现为可预测的退相。</h2>
     <article class="prose">
       <p>
-        I've seen your kind, time and time again. Every fleeting skill must be learnt. Every secret must be archived. Such is the burden of the self-proclaimed bearer of intellect. But in the end, few have the resolve, for the path you carve, consumes.
+        I've seen your kind, time and time again. Every fleeting skill must be
+        learnt. Every secret must be archived. Such is the burden of the
+        self-proclaimed bearer of intellect. But in the end, few have the
+        resolve, for the path you carve, consumes.
       </p>
       <p>
-        Let knowledge serve only man, and let that which does not, remain in darkness.
+        Let knowledge serve only man, and let that which does not, remain in
+        darkness.
       </p>
     </article>
   </section>
-
 </BaseLayout>

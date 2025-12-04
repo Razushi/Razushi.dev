@@ -1,66 +1,69 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import PalettePreview from '../components/PalettePreview.svelte';
-import { getCollection } from 'astro:content';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PalettePreview from "../components/PalettePreview.svelte";
+import { getCollection } from "astro:content";
 
-const posts = await getCollection('blog');
+const posts = await getCollection("blog");
 posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
 const colorTokens = {
-  teal: 'var(--accent-highlight)',
-  copper: 'var(--accent-highlight)',
-  highlight: 'var(--accent-highlight)',
-  cyan: 'var(--core-cyan)',
-  slate: 'var(--neutral-slate)',
-  stone: 'var(--neutral-stone)',
-  bone: 'var(--neutral-bone)',
-  lime: 'var(--core-lime)',
-  sky: 'var(--core-sky)',
-  red: 'var(--core-red)',
-  orange: 'var(--core-orange)',
-  yellow: 'var(--core-yellow)',
-  green: 'var(--core-green)',
-  magenta: 'var(--core-magenta)',
-  violet: 'var(--core-violet)',
-  pink: 'var(--core-pink)',
-  clay: 'var(--core-clay)',
-  'neutral clay': 'var(--neutral-clay)',
-  smoke: 'var(--neutral-smoke)',
-  dusk: 'var(--neutral-dusk)',
+  teal: "var(--accent-highlight)",
+  copper: "var(--accent-highlight)",
+  highlight: "var(--accent-highlight)",
+  cyan: "var(--core-cyan)",
+  slate: "var(--neutral-slate)",
+  stone: "var(--neutral-stone)",
+  bone: "var(--neutral-bone)",
+  lime: "var(--core-lime)",
+  sky: "var(--core-sky)",
+  red: "var(--core-red)",
+  orange: "var(--core-orange)",
+  yellow: "var(--core-yellow)",
+  green: "var(--core-green)",
+  magenta: "var(--core-magenta)",
+  violet: "var(--core-violet)",
+  pink: "var(--core-pink)",
+  clay: "var(--core-clay)",
+  "neutral clay": "var(--neutral-clay)",
+  smoke: "var(--neutral-smoke)",
+  dusk: "var(--neutral-dusk)",
 };
 
 const colorFor = (value?: string) => {
-  if (!value) return 'var(--accent-highlight)';
+  if (!value) return "var(--accent-highlight)";
   const key = value.toLowerCase();
   return colorTokens[key] ?? value;
 };
 
 const coreSwatches = [
-  { name: 'Red', hex: '#d45658' },
-  { name: 'Orange', hex: '#f4a666' },
-  { name: 'Yellow', hex: '#efcc69' },
-  { name: 'Lime', hex: '#76c676' },
-  { name: 'Green', hex: '#7ac85c' },
-  { name: 'Teal', hex: '#3ccfb0' },
-  { name: 'Cyan', hex: '#31a5e9' },
-  { name: 'Sky', hex: '#33a3e3' },
-  { name: 'Violet', hex: '#b58af7' },
-  { name: 'Pink', hex: '#f2c5f0' },
-  { name: 'Magenta', hex: '#d03366' },
-  { name: 'Clay', hex: '#c7876e' },
+  { name: "Red", hex: "#d45658" },
+  { name: "Orange", hex: "#f4a666" },
+  { name: "Yellow", hex: "#efcc69" },
+  { name: "Lime", hex: "#76c676" },
+  { name: "Green", hex: "#7ac85c" },
+  { name: "Teal", hex: "#3ccfb0" },
+  { name: "Cyan", hex: "#31a5e9" },
+  { name: "Sky", hex: "#33a3e3" },
+  { name: "Violet", hex: "#b58af7" },
+  { name: "Pink", hex: "#f2c5f0" },
+  { name: "Magenta", hex: "#d03366" },
+  { name: "Clay", hex: "#c7876e" },
 ];
 
 const neutralSwatches = [
-  { name: 'Stone', hex: '#e4d2a4' },
-  { name: 'Bone', hex: '#d6ccc2' },
-  { name: 'Neutral Clay', hex: '#bcb4a6' },
-  { name: 'Slate', hex: '#545256' },
-  { name: 'Smoke', hex: '#633b3e' },
-  { name: 'Dusk', hex: '#708090' },
+  { name: "Stone", hex: "#e4d2a4" },
+  { name: "Bone", hex: "#d6ccc2" },
+  { name: "Neutral Clay", hex: "#bcb4a6" },
+  { name: "Slate", hex: "#545256" },
+  { name: "Smoke", hex: "#633b3e" },
+  { name: "Dusk", hex: "#708090" },
 ];
 ---
 
-<BaseLayout title="Vestige | Tests" breadcrumbs={[{ label: "Home", href: "/" }, { label: "Tests" }]}>
+<BaseLayout
+  title="Vestige | Tests"
+  breadcrumbs={[{ label: "Home", href: "/" }, { label: "Tests" }]}
+>
   <section class="hero">
     <h1 class="caps">Sandbox</h1>
   </section>
@@ -80,22 +83,31 @@ const neutralSwatches = [
   </section>
 
   <section class="post-grid">
-    {posts.map((post) => (
-      <article class="post-card" style={`border-top: 6px solid ${colorFor(post.data.heroColor)}`}>
-        <div>
-          <p class="post-meta">{post.data.date.toDateString()}</p>
-          <h2>{post.data.title}</h2>
-          <p>{post.data.description}</p>
-        </div>
-        <div class="tag-list">
-          {(post.data.tags ?? []).map((tag) => (
-            <span class="tag">{tag}</span>
-          ))}
-        </div>
-        <a class="button" style={`background:${colorFor(post.data.heroColor)}`} href={`/posts/${post.slug}/`}>
-          Read
-        </a>
-      </article>
-    ))}
+    {
+      posts.map((post) => (
+        <article
+          class="post-card"
+          style={`border-top: 6px solid ${colorFor(post.data.heroColor)}`}
+        >
+          <div>
+            <p class="post-meta">{post.data.date.toDateString()}</p>
+            <h2>{post.data.title}</h2>
+            <p>{post.data.description}</p>
+          </div>
+          <div class="tag-list">
+            {(post.data.tags ?? []).map((tag) => (
+              <span class="tag">{tag}</span>
+            ))}
+          </div>
+          <a
+            class="button"
+            style={`background:${colorFor(post.data.heroColor)}`}
+            href={`/posts/${post.slug}/`}
+          >
+            Read
+          </a>
+        </article>
+      ))
+    }
   </section>
 </BaseLayout>

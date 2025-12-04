@@ -1,15 +1,16 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<BaseLayout title="Vestige | Notes & Blog">
+<BaseLayout title="Vestige | Notes & Blog" stickyFooter={true}>
   <section class="landing">
     <div class="hero-card">
       <div class="avatar" aria-hidden="true">R</div>
       <p class="eyebrow">Greetings.</p>
       <h1>I use NixOS, btw.</h1>
       <p class="lede">
-          Every fleeting skill must be learnt. Every secret must be archived. Such is the burden of the self-proclaimed bearer of intellect.
+        Every fleeting skill must be learnt. Every secret must be archived. Such
+        is the burden of the self-proclaimed bearer of intellect.
       </p>
       <div class="cta-row">
         <a class="ghost-button" href="/blog">Blog posts</a>
@@ -43,7 +44,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       border-radius: 50%;
       display: grid;
       place-items: center;
-      background: radial-gradient(circle at 30% 30%, var(--accent-highlight), #2f3a3b);
+      background: radial-gradient(
+        circle at 30% 30%,
+        var(--accent-highlight),
+        #2f3a3b
+      );
       color: var(--bg);
       font-weight: 800;
       font-size: 1.4rem;

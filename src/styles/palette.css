@@ -119,6 +119,10 @@ a {
   flex-direction: column;
   position: relative;
   padding-top: 70px;
+  padding-bottom: 0;
+}
+
+.footer-sticky {
   padding-bottom: 70px;
 }
 
@@ -149,11 +153,19 @@ a {
   visibility: hidden;
 }
 
-.site-shell.page-blog::before,
-.site-shell.page-blog::after,
 .site-shell.page-about::before,
 .site-shell.page-about::after {
   display: none;
+}
+
+.site-footer.footer-sticky {
+  position: fixed;
+  left: 0;
+  right: 0;
+}
+
+.site-footer.footer-static {
+  position: static;
 }
 
 .breadcrumb {
