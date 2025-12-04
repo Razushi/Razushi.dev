@@ -6,13 +6,33 @@ const posts = await getCollection('blog');
 posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
 type PostEntry = typeof posts[number];
+
+const normalizeCategory = (value?: string) => {
+  const raw = (value ?? '').toString().trim();
+  const base = raw || 'general';
+  const labelSource =
+    base.includes('-') && !base.includes(' ')
+      ? base.replace(/-/g, ' ')
+      : base;
+  const words = labelSource
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+  const label = words.join(' ') || 'General';
+  const slug =
+    labelSource
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'general';
+  return { slug, label };
+};
+
 const grouped = posts.reduce<
   Record<string, { label: string; items: PostEntry[] }>
 >((acc, post) => {
-  const rawCategory = post.data.category ?? 'general';
-  const key = rawCategory.toLowerCase();
-  acc[key] = acc[key] ?? { label: rawCategory.toUpperCase(), items: [] };
-  acc[key].items.push(post);
+  const { slug, label } = normalizeCategory(post.data.category);
+  acc[slug] = acc[slug] ?? { label: label.toUpperCase(), items: [] };
+  acc[slug].items.push(post);
   return acc;
 }, {});
 

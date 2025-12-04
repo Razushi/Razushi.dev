@@ -8,12 +8,22 @@ export async function getStaticPaths() {
     new Set(
       posts.map((p) => {
         const raw = (p.data.category ?? '').toString().trim();
-        return (raw || 'general').toLowerCase();
+        const base = raw || 'general';
+        const labelSource =
+          base.includes('-') && !base.includes(' ')
+            ? base.replace(/-/g, ' ')
+            : base;
+        const slug =
+          labelSource
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '') || 'general';
+        return slug;
       }),
     ),
   );
-  return categories.map((category) => ({
-    params: { category },
+  return categories.map((categorySlug) => ({
+    params: { category: categorySlug },
   }));
 }
 
@@ -22,12 +32,32 @@ if (!category) {
   throw new Error('Category missing');
 }
 
-const categoryKey = (category ?? 'general').toString().trim().toLowerCase();
+const normalizeCategory = (value?: string) => {
+  const raw = (value ?? '').toString().trim();
+  const base = raw || 'general';
+  const labelSource =
+    base.includes('-') && !base.includes(' ')
+      ? base.replace(/-/g, ' ')
+      : base;
+  const words = labelSource
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+  const label = words.join(' ') || 'General';
+  const slug =
+    labelSource
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'general';
+  return { slug, label };
+};
+
+const categoryKey = normalizeCategory(category).slug;
 
 const posts = (await getCollection('blog')).filter(
   (p) => {
-    const raw = (p.data.category ?? '').toString().trim();
-    return (raw || 'general').toLowerCase() === categoryKey;
+    const { slug } = normalizeCategory(p.data.category);
+    return slug === categoryKey;
   },
 );
 posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
@@ -37,10 +67,7 @@ const formatDate = (d: Date) => {
   return local.toISOString().slice(0, 10); // yyyy-mm-dd
 };
 
-const categoryName = category
-  .split(' ')
-  .map((w) => (w ? w.charAt(0).toUpperCase() + w.slice(1).toLowerCase() : ''))
-  .join(' ');
+const categoryName = normalizeCategory(category).label;
 ---
 
 <BaseLayout
@@ -50,90 +77,22 @@ const categoryName = category
     { label: "Blog", href: "/blog" },
     { label: categoryName },
   ]}
+  pageId="page-blog"
 >
-  <main class="category-page">
-    <header class="page-header">
-      <h1 class="caps">{categoryName}</h1>
-      <p class="lede">All posts filed under {categoryName}.</p>
-    </header>
+  <section class="hero">
+    <h1 class="caps">{categoryName}</h1>
+  </section>
 
-    <ul class="post-list">
-      {posts.map((post) => (
-        <li class="post-list-item">
-          <span class="post-date">{formatDate(post.data.date)}</span>
-          <a class="post-title" href={`/blog/${post.slug}/`}>{post.data.title}</a>
-        </li>
-      ))}
-    </ul>
+  <main class="blog-index">
+    <section class="category-block">
+      <ul class="post-list">
+        {posts.map((post) => (
+          <li class="post-list-item">
+            <span class="post-date">{formatDate(post.data.date)}</span>
+            <a class="post-title" href={`/blog/${post.slug}/`}>{post.data.title}</a>
+          </li>
+        ))}
+      </ul>
+    </section>
   </main>
 </BaseLayout>
-
-<style>
-  .category-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    padding: 1rem 0 2rem;
-  }
-
-  .breadcrumb {
-    display: inline-flex;
-    gap: 0.4rem;
-    align-items: center;
-    font-size: 0.95rem;
-    color: var(--muted);
-  }
-
-  .breadcrumb a {
-    color: var(--accent-highlight);
-    text-decoration: none;
-    font-weight: 700;
-  }
-
-  .breadcrumb a:hover {
-    text-decoration: underline;
-  }
-
-  .page-header h1 {
-    margin: 0 0 0.4rem;
-    font-size: clamp(2rem, 4vw, 2.6rem);
-  }
-
-  .page-header .lede {
-    margin: 0;
-    color: var(--muted);
-  }
-
-  .post-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .post-list-item {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 0.75rem;
-    align-items: baseline;
-  }
-
-  .post-date {
-    color: var(--muted);
-    font-size: 0.9rem;
-    white-space: nowrap;
-  }
-
-  .post-title {
-    color: var(--text);
-    text-decoration: none;
-    font-weight: 700;
-  }
-
-  .post-title:hover {
-    color: var(--accent-highlight);
-    text-decoration: underline;
-  }
-</style>

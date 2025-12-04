@@ -16,12 +16,20 @@ const { Content } = await post.render();
 const normalizeCategory = (value?: string) => {
   const raw = (value ?? '').toString().trim();
   const base = raw || 'general';
+  const labelSource =
+    base.includes('-') && !base.includes(' ')
+      ? base.replace(/-/g, ' ')
+      : base;
+  const words = labelSource
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+  const label = words.join(' ') || 'General';
   const slug =
-    base
+    labelSource
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '') || 'general';
-  const label = base.charAt(0).toUpperCase() + base.slice(1).toLowerCase();
   return { slug, label };
 };
 
