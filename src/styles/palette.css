@@ -82,6 +82,7 @@
   --shadow: 0 6px 13px var(--shader-color);
   --vignette-color: var(--shader-color);
   --shell-foreground: var(--text-black);
+  --grid-line: rgba(0, 0, 0, 0.08);
 }
 
 [data-theme="night"] {
