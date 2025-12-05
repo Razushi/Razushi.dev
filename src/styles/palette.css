@@ -48,6 +48,12 @@
   --vignette-color: var(--shader-color);
   --vignette-size: 140px;
   --wrap-width: min(900px, 62vw, 88vw);
+  --grid-size: 5px;
+  --grid-line-weight: 1px;
+  --grid-band-height: clamp(220px, 38vh, 340px);
+  --grid-fade-start: 6%;
+  --grid-fade-end: 80%;
+  --grid-line: rgba(255, 255, 255, 0.08);
 }
 
 [data-theme="dark"] {
@@ -133,28 +139,6 @@ a {
 .site-shell::before,
 .site-shell::after {
   content: '';
-  position: fixed;
-  left: 50%;
-  height: var(--vignette-size);
-  pointer-events: none;
-  z-index: 10;
-  width: var(--wrap-width);
-  transform: translateX(-50%);
-  transition: opacity 0.2s ease, visibility 0.2s ease;
-}
-
-.site-shell::after {
-  bottom: 0;
-  background: linear-gradient(to top, var(--vignette-color), transparent);
-}
-
-.site-shell.vignette-bottom-hidden::after {
-  opacity: 0;
-  visibility: hidden;
-}
-
-.site-shell.page-about::before,
-.site-shell.page-about::after {
   display: none;
 }
 
@@ -541,6 +525,53 @@ h1 {
     0 1px 2px var(--shader-color),
     inset 0 0 30px color-mix(in srgb, var(--shader-color) 25%, transparent);
   padding: var(--card-padding);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.card-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--grid-band-height);
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      transparent 0,
+      transparent calc(var(--grid-size) - var(--grid-line-weight)),
+      var(--grid-line) calc(var(--grid-size) - var(--grid-line-weight)),
+      var(--grid-line) var(--grid-size)
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(var(--grid-size) - var(--grid-line-weight)),
+      var(--grid-line) calc(var(--grid-size) - var(--grid-line-weight)),
+      var(--grid-line) var(--grid-size)
+    );
+  background-size: var(--grid-size) var(--grid-size);
+  background-repeat: repeat;
+  opacity: 0.5;
+  mask-image: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 1) var(--grid-fade-start),
+    rgba(0, 0, 0, 0) var(--grid-fade-end)
+  );
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 1) var(--grid-fade-start),
+    rgba(0, 0, 0, 0) var(--grid-fade-end)
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.card-panel > * {
+  position: relative;
+  z-index: 1;
 }
 
 .theme-toggle {

@@ -28,7 +28,6 @@ const isActive = (path: string) =>
 
 const bodyClass = [
   "site-shell",
-  "vignette-bottom-hidden",
   pageId,
   stickyFooter ? "footer-sticky" : "footer-static",
 ]
@@ -207,7 +206,6 @@ const bodyClass = [
   const storageAccentKey = "epithet-accent";
   const root = document.documentElement;
   const btn = document.getElementById("theme-toggle");
-  const shell = document.querySelector(".site-shell");
   const storedAccent = (() => {
     try {
       return localStorage.getItem(storageAccentKey);
@@ -254,15 +252,4 @@ const bodyClass = [
     applyTheme(next);
   });
 
-  const updateVignette = () => {
-    if (!shell) return;
-    const scrollY = window.scrollY || window.pageYOffset;
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    const hasMore = scrollY < max - 1;
-    shell.classList.toggle("vignette-bottom-hidden", !hasMore);
-  };
-
-  window.addEventListener("scroll", updateVignette, { passive: true });
-  window.addEventListener("resize", updateVignette);
-  updateVignette();
 </script>
