@@ -65,7 +65,9 @@ const segments = typeof segmentsRaw === 'string'
 
 const slugPath = segments.join('/');
 const postMeta = meta.find((item) => item.slugPath === slugPath) ?? null;
-const Content = postMeta ? (await postMeta.entry.render()).Content : null;
+const rendered = postMeta ? await postMeta.entry.render() : null;
+const Content = rendered ? rendered.Content : null;
+const headings = rendered?.headings ?? [];
 
 const latestDateFor = (slugPrefix: string) => {
   const prefix = slugPrefix ? `${slugPrefix}/` : '';
@@ -152,28 +154,30 @@ const breadcrumbs = postMeta
 <BaseLayout
   title={postMeta ? `${postMeta.entry.data.title} | Blog` : `${heading} | Blog`}
   breadcrumbs={breadcrumbs}
-  pageId="page-blog"
+  pageId={postMeta ? "page-blog-post" : "page-blog"}
 >
   {
     postMeta ? (
-      <main class="post-page">
-        <section class="post-hero">
-          <h1 class="post-title-hero">{postMeta.entry.data.title}</h1>
-          <div class="post-meta">
-            <p class="post-date">{formatYMD(postMeta.entry.data.date)}</p>
-            {postMeta.entry.data.tags && postMeta.entry.data.tags.length > 0 && (
-              <div class="tag-row">
-                {postMeta.entry.data.tags.map((tag) => (
-                  <span class="tag">{tag}</span>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
+      <main class="post-layout">
+        <div class="post-page">
+          <section class="post-hero">
+            <h1 class="post-title-hero">{postMeta.entry.data.title}</h1>
+            <div class="post-meta">
+              <p class="post-date">{formatYMD(postMeta.entry.data.date)}</p>
+              {postMeta.entry.data.tags && postMeta.entry.data.tags.length > 0 && (
+                <div class="tag-row">
+                  {postMeta.entry.data.tags.map((tag) => (
+                    <span class="tag">{tag}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
 
-        <article class="prose-content">
-          {Content && <Content />}
-        </article>
+          <article class="prose-content">
+            {Content && <Content />}
+          </article>
+        </div>
       </main>
     ) : (
       <>
@@ -203,6 +207,22 @@ const breadcrumbs = postMeta
           ))}
         </section>
       </>
+    )
+  }
+  {
+    postMeta && headings.length > 0 && (
+      <Fragment slot="sidebar">
+        <aside class="toc toc-float">
+          <p class="toc-title">On this page</p>
+          <ul>
+            {headings.map((h) => (
+              <li class={`toc-item level-${h.depth}`}>
+                <a href={`#${h.slug}`}>{h.text}</a>
+              </li>
+            ))}
+          </ul>
+        </aside>
+      </Fragment>
     )
   }
 </BaseLayout>

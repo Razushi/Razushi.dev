@@ -23,21 +23,39 @@ if (!post) {
   throw new Error('Post not found');
 }
 
-const { Content } = await post.render();
+const rendered = await post.render();
+const { Content, headings = [] } = rendered;
 ---
 
 <BaseLayout title={`${post.data.title} - Vestige`} description={post.data.description}>
-  <article class="prose">
-    <p class="eyebrow" style="margin-bottom:0.5rem;">{post.data.date.toDateString()}</p>
-    <h1>{post.data.title}</h1>
-    <div class="tag-list" style="margin-bottom:1.5rem;">
-      {(post.data.tags ?? []).map((tag) => (
-        <span class="tag">{tag}</span>
-      ))}
-    </div>
-    <Content />
-    <div style="margin-top:3rem;">
-      <a class="ghost-button" href="/posts">Back to posts</a>
-    </div>
-  </article>
+  <main class="post-layout">
+    <article class="prose">
+      <p class="eyebrow" style="margin-bottom:0.5rem;">{post.data.date.toDateString()}</p>
+      <h1>{post.data.title}</h1>
+      <div class="tag-list" style="margin-bottom:1.5rem;">
+        {(post.data.tags ?? []).map((tag) => (
+          <span class="tag">{tag}</span>
+        ))}
+      </div>
+      <Content />
+      <div style="margin-top:3rem;">
+        <a class="ghost-button" href="/posts">Back to posts</a>
+      </div>
+    </article>
+  </main>
+
+  {headings.length > 0 && (
+    <Fragment slot="sidebar">
+      <aside class="toc toc-float">
+        <p class="toc-title">On this page</p>
+        <ul>
+          {headings.map((h) => (
+            <li class={`toc-item level-${h.depth}`}>
+              <a href={`#${h.slug}`}>{h.text}</a>
+            </li>
+          ))}
+        </ul>
+      </aside>
+    </Fragment>
+  )}
 </BaseLayout>

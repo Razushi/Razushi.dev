@@ -140,7 +140,7 @@ const bodyClass = [
         </button>
       </div>
     </header>
-    <div class="wrap page-wrap">
+    <div class={`wrap page-wrap ${Astro.slots.sidebar ? "has-sidebar" : ""}`}>
       <div class="card-panel content-panel">
         {
           breadcrumbs.length > 0 && (
@@ -163,6 +163,13 @@ const bodyClass = [
         }
         <slot />
       </div>
+      {
+        Astro.slots.sidebar && (
+          <aside class="sidebar-panel">
+            <slot name="sidebar" />
+          </aside>
+        )
+      }
     </div>
     <footer
       class={`site-footer ${stickyFooter ? "footer-sticky" : "footer-static"}`}

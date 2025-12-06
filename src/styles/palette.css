@@ -485,7 +485,7 @@ h1 {
 }
 
 .page-wrap {
-  padding: 0.5rem 0 1.5rem;
+  padding-bottom: var(--card-padding);
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -846,6 +846,77 @@ h1 {
 .prose a {
   color: var(--accent-highlight);
   text-decoration: underline;
+}
+
+.toc {
+  position: sticky;
+  top: var(--card-padding);
+  align-self: start;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--card-padding);
+  background: var(--surface);
+}
+
+.toc-float {
+  position: absolute;
+  top: 0;
+  left: calc(100% + var(--card-padding));
+  width: 220px;
+  z-index: 5;
+}
+
+.post-layout {
+  position: relative;
+}
+
+.toc-title {
+  margin: 0 0 0.6rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+}
+
+.toc ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.toc-item a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color var(--transition);
+}
+
+.toc-item a:hover {
+  color: var(--accent-highlight);
+}
+
+.toc-item.level-3 {
+  padding-left: 0.75rem;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 980px) {
+  .toc {
+    position: static;
+  }
+
+  .toc-float {
+    position: static;
+    left: auto;
+    width: auto;
+    margin-top: 1rem;
+  }
+}
+
+.page-blog-post .content-panel {
+  overflow: visible;
 }
 
 .palette-section {
