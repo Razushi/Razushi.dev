@@ -393,6 +393,9 @@ h1 {
   color: var(--muted);
   font-size: 0.9rem;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 .site-header,

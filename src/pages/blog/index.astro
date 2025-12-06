@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import FileIcon from '../../components/FileIcon.astro';
 import FolderIcon from '../../components/FolderIcon.astro';
+import ChevronRightIcon from '../../components/ChevronRightIcon.astro';
 import { getCollection } from 'astro:content';
 
 const slugifySegment = (value: string) =>
@@ -36,7 +37,7 @@ const latestDateFor = (slugPrefix: string) => {
 };
 
 const listAtPath = (slugSegments: string[]) => {
-  const folderMap = new Map<string, { slug: string; label: string; lastUpdated: string | null }>();
+  const folderMap = new Map<string, { slug: string; label: string; total: number }>();
   const files: typeof meta[number][] = [];
 
   meta.forEach((item) => {
@@ -54,7 +55,7 @@ const listAtPath = (slugSegments: string[]) => {
       folderMap.set(childSlug, {
         slug,
         label: item.rawSegments[slugSegments.length] ?? childSlug,
-        lastUpdated: latestDateFor(slug),
+        total: meta.filter((m) => m.slugPath.startsWith(`${slug}/`) || m.slugPath === slug).length,
       });
     }
   });
@@ -88,9 +89,7 @@ const { folders, files } = listAtPath([]);
         <div class="entry-body">
           <div class="entry-title">{folder.label}</div>
         </div>
-        <div class="entry-meta">
-          {folder.lastUpdated ? `Updated: ${folder.lastUpdated}` : "Empty"}
-        </div>
+        <div class="entry-meta">{folder.total} ›</div>
       </a>
     ))}
 
@@ -100,7 +99,7 @@ const { folders, files } = listAtPath([]);
         <div class="entry-body">
           <div class="entry-title">{post.entry.data.title}</div>
         </div>
-        <div class="entry-meta">Added: {formatYMD(post.entry.data.date)}</div>
+        <div class="entry-meta">{formatYMD(post.entry.data.date)}</div>
       </a>
     ))}
   </section>
