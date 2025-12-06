@@ -1,7 +1,6 @@
 ---
 title: "Who is Voruna and why aren't you barking?"
 date: "2025-02-28"
-category: "WARFRAME"
 tags: ["warframe", "melee", "testing"]
 description: Quick results from swapping stances and heavy attack builds.
 ---

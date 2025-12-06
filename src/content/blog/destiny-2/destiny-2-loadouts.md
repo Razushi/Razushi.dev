@@ -2,7 +2,6 @@
 title: "Imagine not using 6 shooter and Combustion"
 description: "Build stubs for PvE strikes, raids, and seasonal activities."
 date: "2025-07-14"
-category: "Destiny 2"
 tags:
   - destiny 2
   - builds

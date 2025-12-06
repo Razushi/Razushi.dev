@@ -1,8 +1,7 @@
 ---
-title: "Sunlight Spear? Sunlight Spear."
+title: "Holy Lothric Knight Sword My Beloved"
 description: "Boss order, bonfire splits, and gear picks for casual and speed runs."
-date: "2025-09-15"
-category: "Dark Souls"
+date: "2025-06-06"
 tags:
   - dark souls 3
   - routes

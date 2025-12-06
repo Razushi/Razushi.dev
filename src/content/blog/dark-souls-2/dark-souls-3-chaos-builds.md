@@ -1,8 +1,7 @@
 ---
-title: "Dark Build scalings"
+title: "Chaos Builds"
 description: "Boss order, bonfire splits, and gear picks for casual and speed runs."
-date: "2025-03-15"
-category: "Dark Souls"
+date: "2025-07-23"
 tags:
   - dark souls 3
   - routes

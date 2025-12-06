@@ -1,49 +1,69 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import FileIcon from '../../components/FileIcon.astro';
+import FolderIcon from '../../components/FolderIcon.astro';
 import { getCollection } from 'astro:content';
 
 const posts = await getCollection('blog');
-posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-type PostEntry = typeof posts[number];
-
-const normalizeCategory = (value?: string) => {
-  const raw = (value ?? '').toString().trim();
-  const base = raw || 'general';
-  const labelSource =
-    base.includes('-') && !base.includes(' ')
-      ? base.replace(/-/g, ' ')
-      : base;
-  const words = labelSource
-    .split(/\s+/)
+const titleCase = (value: string) =>
+  value
+    .split('-')
     .filter(Boolean)
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
-  const label = words.join(' ') || 'General';
-  const slug =
-    labelSource
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '') || 'general';
-  return { slug, label };
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
+
+const listAtPath = (segments: string[]) => {
+  const folderMap = new Map<string, { slug: string; label: string }>();
+  const files: typeof posts = [];
+
+  const formatYMD = (d: Date) => {
+    const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+    return local.toISOString().slice(0, 10);
+  };
+
+  const latestDateFor = (slugPrefix: string) => {
+    const prefix = slugPrefix ? `${slugPrefix}/` : '';
+    let latest: Date | null = null;
+    posts.forEach((p) => {
+      if (!prefix || p.slug.startsWith(prefix)) {
+        latest = !latest || p.data.date > latest ? p.data.date : latest;
+      }
+    });
+    return latest ? formatYMD(latest) : null;
+  };
+
+  posts.forEach((post) => {
+    const parts = post.slug.split('/');
+    if (!segments.every((seg, idx) => parts[idx] === seg)) return;
+    if (parts.length === segments.length) return;
+
+    if (parts.length === segments.length + 1) {
+      files.push(post);
+      return;
+    }
+
+    const child = parts[segments.length];
+    if (!folderMap.has(child)) {
+      folderMap.set(child, {
+        slug: [...segments, child].join('/'),
+        label: titleCase(child),
+        lastUpdated: latestDateFor([...segments, child].join('/')),
+      });
+    }
+  });
+
+  files.sort((a, b) =>
+    a.data.title.localeCompare(b.data.title, 'en', { sensitivity: 'base' }),
+  );
+  const folders = Array.from(folderMap.values()).sort((a, b) =>
+    a.label.localeCompare(b.label, 'en', { sensitivity: 'base' }),
+  );
+
+  return { folders, files, formatYMD };
 };
 
-const grouped = posts.reduce<
-  Record<string, { label: string; items: PostEntry[] }>
->((acc, post) => {
-  const { slug, label } = normalizeCategory(post.data.category);
-  acc[slug] = acc[slug] ?? { label: label.toUpperCase(), items: [] };
-  acc[slug].items.push(post);
-  return acc;
-}, {});
-
-Object.values(grouped).forEach((group) =>
-  group.items.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
-);
-
-const formatDate = (d: Date) => {
-  const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
-  return local.toISOString().slice(0, 10); // yyyy-mm-dd
-};
+const { folders, files, formatYMD } = listAtPath([]);
 ---
 
 <BaseLayout
@@ -54,23 +74,28 @@ const formatDate = (d: Date) => {
   <section class="hero">
     <h1 class="caps">Blog</h1>
   </section>
-  <main class="blog-index">
 
-
-    {Object.entries(grouped).map(([categorySlug, group]) => (
-      <section class="category-block">
-        <a class="category-banner" href={`/blog/${categorySlug}/`}>
-          <h2>{group.label}</h2>
-        </a>
-        <ul class="post-list">
-          {group.items.map((post) => (
-            <li class="post-list-item">
-              <span class="post-date">{formatDate(post.data.date)}</span>
-              <a class="post-title" href={`/blog/${post.slug}/`}>{post.data.title}</a>
-            </li>
-          ))}
-        </ul>
-      </section>
+  <section class="entry-list">
+    {folders.map((folder) => (
+      <a class="entry-card folder" href={`/blog/${folder.slug}/`}>
+        <span class="entry-icon" aria-hidden="true"><FolderIcon /></span>
+        <div class="entry-body">
+          <div class="entry-title">{folder.label}</div>
+        </div>
+        <div class="entry-meta">
+          {folder.lastUpdated ? `Updated: ${folder.lastUpdated}` : "Empty"}
+        </div>
+      </a>
     ))}
-  </main>
+
+    {files.map((post) => (
+      <a class="entry-card file" href={`/blog/${post.slug}/`}>
+        <span class="entry-icon" aria-hidden="true"><FileIcon /></span>
+        <div class="entry-body">
+          <div class="entry-title">{post.data.title}</div>
+        </div>
+        <div class="entry-meta">Added: {formatYMD(post.data.date)}</div>
+      </a>
+    ))}
+  </section>
 </BaseLayout>

@@ -2,7 +2,6 @@
 title: "Building Anor Londo"
 description: "Boss order, bonfire splits, and gear picks for casual and speed runs."
 date: "2025-02-13"
-category: "Valheim"
 tags:
   - dark souls 3
   - routes

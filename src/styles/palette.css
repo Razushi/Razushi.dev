@@ -330,6 +330,71 @@ h1 {
   text-decoration: underline;
 }
 
+.entry-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0;
+  margin: 0;
+}
+
+.entry-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition), background var(--transition);
+}
+
+.entry-card:hover {
+  border-color: var(--accent-highlight);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
+.entry-icon {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-highlight);
+  flex-shrink: 0;
+}
+.entry-card.folder .entry-icon svg {
+  fill: currentColor;
+  stroke: currentColor;
+}
+.entry-card.file .entry-icon svg {
+  fill: none;
+  stroke: currentColor;
+}
+
+.entry-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1;
+}
+
+.entry-title {
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+}
+
+.entry-meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
 .site-header,
 .site-footer {
   background: var(--shell);

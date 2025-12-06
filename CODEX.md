@@ -3,30 +3,27 @@
 Internal guide to the Vestige site: stack, routing, theming, and how to extend it.
 
 ## Stack & Commands
-- Astro 5 with Svelte integration (`astro.config.mjs`), TypeScript support via Astro strict config.
-- CSS lives in `src/styles/palette.css` (current) and `src/styles/olderpalette.css` (legacy, not imported).
-- Package manager: pnpm lockfile present; scripts in `package.json` (`pnpm dev`, `pnpm build`, `pnpm preview`, `pnpm run deploy` to build + `gh-pages`).
-- Svelte preprocessing is the Astro default (`svelte.config.js`). Favicon is in `public/favicon.svg`.
-- Fonts: `Share Tech` is imported via Google Fonts and applied to headings/caps; body stack stays monospace/sans.
-- Optional: Nix flake (`flake.nix`) provides a dev shell (`nix develop`) with Node, pnpm, Rust, wasm tooling, and a CI helper derivation. It references a broader workspace name (`notashelf-dev`), but the shell is usable for this site.
+- Astro 5 with Svelte integration (`astro.config.mjs`), TypeScript via `astro/tsconfigs/strict`.
+- Styles: `src/styles/palette.css` (current) and `src/styles/olderpalette.css` (legacy reference).
+- Package manager: pnpm; scripts (`package.json`): `pnpm dev`, `pnpm build`, `pnpm preview`, `pnpm run deploy` (build + `gh-pages`), `pnpm astro`.
+- Svelte preprocessing uses `vitePreprocess` (`svelte.config.js`).
+- Site config: `site: https://razushi.dev`; static assets in `public/` (`favicon.svg`, `CNAME`).
+- Optional: Nix flake (`flake.nix`) gives `nix develop` (node/pnpm/rust/wasm/lighthouse) and `nix fmt` (alejandra).
 
 ## Directory Map
-- `src/layouts/BaseLayout.astro` – Global shell (imports `palette.css`), header/footer, nav, breadcrumb slot, theme toggle script.
-- `src/styles/palette.css` – CSS variables + global styles (layout, nav, cards, buttons, blog/post classes). `olderpalette.css` kept for reference.
-- `src/components/FireIcon.astro` – Flame SVG used in brand mark.
-- `src/components/PalettePreview.svelte` – Swatch selector (used on `/tests`) emitting `select` events.
+- `src/layouts/BaseLayout.astro` – Global shell (imports `palette.css`), fixed header/nav, optional breadcrumbs, theme bootstrap + toggle, sticky/static footer option.
+- `src/styles/palette.css` – CSS variables, themes, layout helpers (nav, cards, buttons, post styles), and folder/file listing styles (`entry-*`). `olderpalette.css` is a prior palette.
+- `src/components/FireIcon.astro` – Brand flame. `FileIcon.astro` and `FolderIcon.astro` – Lucide-style glyphs for listings.
+- `src/components/PalettePreview.svelte` – Swatch grid emitting `select` events; used on `/tests`.
 - `src/content/config.ts` – Content collection schema for `blog`.
-- `src/content/blog/*.md` – Markdown posts (frontmatter drives routes/meta).
-- `src/pages/` – Astro routes:
-  - `index.astro` (`/`) landing hero.
-  - `blog/index.astro` (`/blog`) grouped listing.
-  - `blog/[slug].astro` post detail.
-  - `blog/[category].astro` category listing.
-  - `posts/index.astro` alternate archive grid.
-  - `posts/[slug].astro` simple detail view.
+- `src/content/blog/` – Markdown posts; folder structure defines URL slugs and breadcrumbs (nested folders allowed).
+- `src/pages/` routes:
+  - `index.astro` landing.
+  - `blog/index.astro` root blog listing (folders + files).
+  - `blog/[...segments].astro` nested catch-all for folder indexes and post detail pages.
+  - `posts/index.astro`, `posts/[...slug].astro` (legacy archive view, still functional with nested slugs).
   - `about.astro`, `tests.astro`.
-- `public/` – Static assets (favicon). `dist/` contains build output.
-- `.vscode/` – Editor recommendations (Astro extension, dev server launch).
+- `public/` – Static assets. `dist/` holds build output.
 
 ## Content Model (Astro Collections)
 - Collection: `blog` (`src/content/config.ts`).
@@ -34,74 +31,62 @@ Internal guide to the Vestige site: stack, routing, theming, and how to extend i
   - `title` (string, required)
   - `description` (string, optional)
   - `date` (string → Date)
-  - `category` (string, default `"general"`)
   - `tags` (string array, default `[]`)
   - `heroColor` (string, optional; used for card borders/buttons)
-- Slugs come from filenames. Files live under `src/content/blog/`; nested folders are allowed and become part of the slug.
+- Slugs come from the file path under `src/content/blog/`. Nested folders are part of the slug and drive breadcrumbs and URLs (all lowercase/hyphen suggested).
 
 ## Layout & Global UI (BaseLayout)
-- Applies `palette.css` globally. `<html>` starts with `data-theme="dark"`.
-- Header nav: brand + links (`/blog`, `/tests`, `/about`, external GitHub). Active link detection checks the current path prefix.
-- Brand behavior: on the home page the “Vestige” text is accent-colored and underlined; on hover it accents/underlines; otherwise it uses the base text color. Fire icon stays accent.
-- Breadcrumbs: pass an array of `{label, href?}` via props to render in `wrap page-wrap`.
-- Footer: copyright year + “Built with Astro + Svelte”.
-- Theme toggle button cycles **dark → light → night**:
-  - LocalStorage keys: `epithet-theme` (theme), `epithet-accent` (accent color, if set elsewhere).
-  - Applies CSS variables `--accent-highlight`, `--accent-teal`, `--accent-copper` to the chosen accent; default is the CSS value of `--accent-highlight`.
-  - Sets `data-theme` on `<html>` and `data-theme-state` on the toggle for icon switching (sun/moon/star).
-- Vignette effect: `.site-shell` adds gradient overlays at the bottom; JS toggles `vignette-bottom-hidden` when scrolled to the end. Pages can pass `pageId` to `BaseLayout` to add a body class (e.g., `/blog` uses `page-blog` to disable the vignette).
-- Hero sections (`.hero`) use a grid with vertical centering; inline padding on hero sections was removed and is managed in CSS.
+- Imports `palette.css`; sets page `<title>`/`description` from props (defaults: `Vestige`, `Personal writing & notes`).
+- Bootstraps theme on load: reads `epithet-theme`/`epithet-accent` from localStorage, sets `data-theme` and `data-theme-state` on `<html>`, applies `color-scheme`, exposes `window.__vestigeTheme`.
+- Theme toggle cycles **dark → light → night**; updates `data-theme-state` on the button and stores the selection. Accent key applies the same value to `--accent-highlight`, `--accent-teal`, `--accent-copper`.
+- Body class combines `site-shell`, optional `pageId`, and footer mode (`footer-sticky`/`footer-static`).
+- Header: fixed bar with brand (FireIcon + “Vestige”) linking home; nav links `/blog`, `/tests`, `/about` with active detection via path prefix.
+- Breadcrumbs: optional array of `{label, href?}` rendered above content inside the main card.
+- Footer: copyright year + GitHub link. `stickyFooter` prop fixes it to the viewport bottom; otherwise it follows content.
 
 ## Theming & Styles (`src/styles/palette.css`)
-- Palette variables:
-  - Core hues (`--core-red` … `--core-pink`, `--core-magenta`, `--core-clay`), neutrals (`--neutral-stone`, `--neutral-bone`, `--neutral-clay`, `--neutral-slate`, `--neutral-smoke`, `--neutral-dusk`).
-  - Accent rail: `--accent-highlight` feeds `--accent-teal` and `--accent-copper`; `--accent-rose` and `--accent-cyan` available.
-  - Layout tokens: radii, transitions, `--card-padding`, `--wrap-width`, vignette sizing.
-- Themes:
-  - `[data-theme="dark"]`: dark surfaces, light text, light borders, vignette/shadow inverted.
-  - `[data-theme="light"]`: light background, dark text, darker shader/shadow.
-  - `[data-theme="night"]`: alt-black background with teal-ish accents.
-- Utility: `.caps` forces uppercase text and uses Share Tech (used on hero H1s for non-landing pages and category headers).
-- Key layout classes:
-  - `.site-shell` sets flex column layout, header/footer padding, fixed vignette gradients.
-  - `.wrap` width clamp; `.page-wrap` vertical padding; `.card-panel`, `.post-card`, `.ghost-button`, `.tag`, `.tag-list`, `.post-grid`, `.blog-index`, `.category-block` define most cards/lists.
-  - Nav styles: `.nav`, `.nav-links`, `.brand`, `.theme-toggle` (icon swap via data attribute, hover states tuned per theme).
-  - Typography helpers: `.eyebrow` (uppercase tracking), `.hero`, `.lede`, `.prose` base.
-- `olderpalette.css` mirrors the variables but lacks newer vignette/layout tweaks; currently unused but can inform fallback styling.
+- Palette variables: core hues (red → clay), neutrals (stone/bone/clay/slate/smoke/dusk), single accent rail (`--accent-highlight` feeding teal/copper), plus rose/cyan.
+- Themes: `[data-theme="dark" | "light" | "night"]` set surfaces, text, borders, shadows, and `color-scheme`.
+- Layout tokens: radii, transitions, `--card-padding`, `--wrap-width` (min(900px, 62vw, 88vw)), grid overlay settings for `card-panel`, shader/vignette colors.
+- Font stack: `'Geist Mono', 'Share Tech', 'FiraCode', 'Geist', 'Inter', system`; `.caps` uppercases and letter-spaces headings.
+- Key classes: `site-shell` spacing for fixed header/footer; `wrap`, `page-wrap`, `card-panel`; `ghost-button`; `post-grid`/`post-card`; `.tag`/`.tag-list`; palette preview grid; nav (`.nav`, `.brand`, `.nav-links`, `.theme-toggle`); folder/file listings (`.entry-list`, `.entry-card`, `.entry-icon`, `.entry-meta`, `.entry-desc`).
 
 ## Pages & Routing
-- `/` (`src/pages/index.astro`): Centered hero card with avatar circle, tagline, and CTA buttons to `/blog` and `/about`.
-- `/blog` (`blog/index.astro`): Fetches all posts, groups by `category` (default `general`), sorted newest-first. Categories are normalized case-insensitively, displayed uppercase, and the banner itself links to the category page; banner now uses a dark strip with an accent left bar, subtle gradient, and hover lift/shadow; each block lists date/title pairs.
-- `/blog/[slug]`: Renders a single post with breadcrumbs: Home → Blog → Category → Title. Shows formatted date and tags, then Markdown content via `<Content />`.
-- `/blog/[category]`: Static paths generated from existing categories (case-insensitive with slugification). Displays the category name title-cased and lists posts in that category with dates and titles.
-- `/posts`: Alternate archive grid. Each card uses `heroColor` (or a mapped token name) for a 6px top border and CTA button color; shows date, title, description.
-- `/posts/[slug]`: Simple prose layout with eyebrow date, tags, content, and a “Back to posts” button.
-- `/about`: Static profile/career writeup inside a `card-panel`.
-- `/tests`: Sandbox page:
-  - PalettePreview components show core and neutral swatches (client:idle hydration).
-  - Reuses post cards with tag chips and a “Read” button colored by `heroColor`.
+- `/` (`index.astro`): centered landing card with avatar initial, eyebrow greeting, “I use NixOS, btw” headline, CTAs to `/blog` and `/about`; sticky footer on.
+- `/blog` (`blog/index.astro`): lists top-level folders first (alphabetical), then files at root. Each folder/file shows an icon and metadata (date for files).
+- `/blog/...` (`blog/[...segments].astro`):
+  - If the path matches a folder, renders a folder index (folders first, then files) with breadcrumbs reflecting each folder segment (title-cased).
+  - If the path matches a post slug, renders the post detail with breadcrumbs (Home → Blog → folders → post title), formatted date, tags, and markdown content.
+- `/posts`: legacy archive grid; cards use `heroColor` (or a color token) for a top border and CTA color; supports nested slugs.
+- `/posts/...`: legacy post detail view (catch-all).
+- `/tests`: palette preview + post grid sandbox (uses `PalettePreview` swatches).
+- `/about`: static writeup with caps heading and bilingual intro line; sticky footer enabled.
 
 ## Components
-- `FireIcon.astro`: 28px stroke SVG used in the nav brand.
-- `PalettePreview.svelte`: Accepts `swatches: {name, hex}[]`, highlights selection, emits `select` events; styles include hover lift and accent border on selection.
+- `FireIcon.astro` – 28px stroke flame icon for the nav brand.
+- `FolderIcon.astro` / `FileIcon.astro` – Lucide-style SVGs for folder/file rows.
+- `PalettePreview.svelte` – Responsive swatch buttons showing name/hex, highlights selection, emits `select` events, shows a selected readout; used on `/tests`.
 
-## Content Inventory (current posts)
-- `hello-world.md` (2025-07-11) tags: meta, personal; heroColor `#3ccfb0`; category default (general).
-- `colour-playbook.md` (2025-07-09) tags: design, palette; heroColor `#c7876e`.
-- `games-notes.md` (2025-07-05) tags: games, guides; heroColor `#31a5e9`.
-- `warframe-prime-hunt.md` (2025-03-12) category WARFRAME; tags: warframe, farming, prime.
-- `warframe-mod-testing.md` (2025-02-28) category WARFRAME; tags: warframe, melee, testing.
+## Content Inventory (posts, by folder path)
+- `dark-souls/sunlight-spear.md` — 2025-09-15 — tags: dark souls 3, routes, bosses — heroColor `#efcc69`.
+- `dark-souls/Holy-lothric-knight-sword.md` — 2025-06-06 — tags: dark souls 3, routes, bosses — heroColor `#efcc69`.
+- `dark-souls/dark-notes.md` — 2025-03-15 — tags: dark souls 3, routes, bosses — heroColor `#efcc69`.
+- `dark-souls-2/dark-souls-3-chaos-builds.md` — 2025-07-23 — tags: dark souls 3, routes, bosses — heroColor `#efcc69`.
+- `destiny-2/destiny-2-loadouts.md` — 2025-07-14 — tags: destiny 2, builds, loadouts — heroColor `#31a5e9`.
+- `warframe/warframe-prime-hunt.md` — 2025-03-12 — tags: warframe, farming, prime — heroColor unset (falls back to accent).
+- `warframe/warframe-mod-testing.md` — 2025-02-28 — tags: warframe, melee, testing — heroColor unset.
+- `valheim/anor-londo-build-guide.md` — 2025-02-13 — tags: dark souls 3, routes, bosses — heroColor `#efcc69`.
+- `gtfo/estus-and-sunny-d.md` — 2025-01-12 — tags: dark souls 3, routes, bosses — heroColor `#efcc69`.
 
 ## How to Extend
-- Add a post: create `src/content/blog/your-title.md` with frontmatter matching the schema. `category` controls grouping; `heroColor` can be a hex or one of the token names (`teal`, `copper`, `cyan`, `slate`, `stone`, etc.) used in archive/test cards.
-- Theming tweaks:
-  - Change any CSS variable in `palette.css` to retheme surfaces/accents. `--accent-highlight` is the master accent feeding buttons/links.
-  - Theme toggle cycles `dark → light → night`; ensure new theme variables live under the matching `[data-theme]` block.
-  - Accent persistence key exists (`epithet-accent`); wiring a color picker to call `root.style.setProperty("--accent-highlight", value)` will sync with the toggle script.
-- Layout tweaks: shared classes (`wrap`, `card-panel`, `ghost-button`, `post-card`, `prose`) are defined in `palette.css`; reuse them for consistent spacing/radius/shadow.
-- Nav updates: edit links in `src/layouts/BaseLayout.astro`; `isActive` checks path prefixes to set `.active`.
+- Add a post: place `your-title.md` inside `src/content/blog/<folder>/...` (folders become URL segments). Frontmatter needs `title`, `date`, optional `description`, `tags`, `heroColor`. Filename/paths set the slug; title drives the breadcrumb label for the file itself.
+- Folders: nested folders are allowed; each folder path gets its own index page. Folder labels are derived from the segment (hyphens → spaces, title-cased) for breadcrumbs and listings.
+- `heroColor` can be a hex or any token used on `/posts` and `/tests` (teal, copper, highlight, cyan, slate, stone, bone, lime, sky, red, orange, yellow, green, magenta, violet, pink, clay, neutral clay, smoke, dusk).
+- Nav lives in `src/layouts/BaseLayout.astro`; reuse global classes from `palette.css` (`wrap`, `card-panel`, `ghost-button`, `post-card`, `prose`, `entry-card`) for consistent spacing.
+- Themes: toggle cycles dark/light/night and re-applies stored accent. Persist a custom accent by setting `--accent-highlight` and saving it under `epithet-accent`.
 
 ## Dev Notes
-- Astro content collection is already registered in `.astro/collections` after a build; no manual action needed.
-- Build output lives in `dist/`. `deploy` script runs `astro build` then publishes `dist` via `gh-pages`.
-- If using the Nix flake, the dev shell exports `BUILD_DATE` and pins toolchains; otherwise rely on Node/pnpm locally.
+- `pnpm dev` (or `pnpm astro dev`) to run locally; `pnpm build` → `dist`; `pnpm preview` serves the build; `pnpm run deploy` builds then publishes `dist` with `gh-pages`.
+- `CNAME` pins deploys to `razushi.dev`.
+- Static site only; no server/runtime dependencies. `olderpalette.css` kept for reference.
+- Nix: `nix develop` drops into a shell with node/pnpm/rust/wasm/lighthouse and exports `BUILD_DATE`; `nix fmt` runs alejandra.

@@ -6,11 +6,23 @@ export async function getStaticPaths() {
   const posts = await getCollection('blog');
   return posts.map((post) => ({
     params: { slug: post.slug },
-    props: { post },
   }));
 }
 
-const { post } = Astro.props;
+const slugParam = Astro.params.slug;
+const slug = typeof slugParam === 'string'
+  ? slugParam
+  : Array.isArray(slugParam)
+    ? slugParam.join('/')
+    : '';
+
+const post =
+  (await getCollection('blog')).find((entry) => entry.slug === slug) ?? null;
+
+if (!post) {
+  throw new Error('Post not found');
+}
+
 const { Content } = await post.render();
 ---
 
@@ -25,7 +37,7 @@ const { Content } = await post.render();
     </div>
     <Content />
     <div style="margin-top:3rem;">
-      <a class="ghost-button" href="/">Back to posts</a>
+      <a class="ghost-button" href="/posts">Back to posts</a>
     </div>
   </article>
 </BaseLayout>
