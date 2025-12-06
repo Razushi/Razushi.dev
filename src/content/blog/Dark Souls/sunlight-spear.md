@@ -116,3 +116,75 @@ swap-back()
 * Aim for the *head* on large bosses (Nameless King Phase 1, Wyverns, Dragonslayer Armour) — the damage multiplier is significant.
 * If you miss the projectile, the AoE still hits; learn spacing.
 * Use during boss recovery animations to guarantee a hit.
+
+## Recommended Setup (Sample Build)
+
+### -# Equipment
+
+* **Yorshka’s Chime**
+* **Canvas Talisman** (for poise-casting options)
+* **Saint’s Hood / Fire Keeper Robes**
+* **Lothric Knight Sword (Lightning-infused)**
+
+### -# Rings
+
+1. Ring of the Sun’s First Born
+2. Morne’s Ring
+3. Lightning Clutch Ring
+4. Sage Ring (if not at 30 Dex for cast speed soft cap)
+
+---
+
+## Tips
+
+* Aim for the *head* on large bosses (Nameless King Phase 1, Wyverns, Dragonslayer Armour) — the damage multiplier is significant.
+* If you miss the projectile, the AoE still hits; learn spacing.
+* Use during boss recovery animations to guarantee a hit.
+
+## Recommended Setup (Sample Build)
+
+### -# Equipment
+
+* **Yorshka’s Chime**
+* **Canvas Talisman** (for poise-casting options)
+* **Saint’s Hood / Fire Keeper Robes**
+* **Lothric Knight Sword (Lightning-infused)**
+
+### -# Rings
+
+1. Ring of the Sun’s First Born
+2. Morne’s Ring
+3. Lightning Clutch Ring
+4. Sage Ring (if not at 30 Dex for cast speed soft cap)
+
+---
+
+## Tips
+
+* Aim for the *head* on large bosses (Nameless King Phase 1, Wyverns, Dragonslayer Armour) — the damage multiplier is significant.
+* If you miss the projectile, the AoE still hits; learn spacing.
+* Use during boss recovery animations to guarantee a hit.
+
+## Recommended Setup (Sample Build)
+
+### -# Equipment
+
+* **Yorshka’s Chime**
+* **Canvas Talisman** (for poise-casting options)
+* **Saint’s Hood / Fire Keeper Robes**
+* **Lothric Knight Sword (Lightning-infused)**
+
+### -# Rings
+
+1. Ring of the Sun’s First Born
+2. Morne’s Ring
+3. Lightning Clutch Ring
+4. Sage Ring (if not at 30 Dex for cast speed soft cap)
+
+---
+
+## Tips
+
+* Aim for the *head* on large bosses (Nameless King Phase 1, Wyverns, Dragonslayer Armour) — the damage multiplier is significant.
+* If you miss the projectile, the AoE still hits; learn spacing.
+* Use during boss recovery animations to guarantee a hit.
