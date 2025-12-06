@@ -43,6 +43,9 @@
             name = "blog-dev";
 
             packages = with pkgs; [
+              # Shell
+              fish
+
               # Website
               nodejs-slim
               pnpm
@@ -66,6 +69,14 @@
             env = {
               BUILD_DATE = buildDateFromSelf;
             };
+
+            # Drop into fish automatically for interactive shells.
+            shellHook = ''
+              export SHELL=${pkgs.fish}/bin/fish
+              if [ -t 0 ]; then
+                exec "$SHELL"
+              fi
+            '';
           };
         }
       );
