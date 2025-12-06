@@ -4,28 +4,57 @@ import FileIcon from '../../components/FileIcon.astro';
 import FolderIcon from '../../components/FolderIcon.astro';
 import { getCollection } from 'astro:content';
 
+const slugifySegment = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+const formatYMD = (d: Date) => {
+  const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 10);
+};
+
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
-  const folders = new Set();
+  const slugifySegmentLocal = (value: string) =>
+    value
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  const meta = posts.map((entry) => {
+    const rawPath = entry.id.replace(/^blog\//, '').replace(/\.md$/, '');
+    const rawSegments = rawPath.split('/');
+    const slugSegments = rawSegments.map(slugifySegmentLocal);
+    const slugPath = slugSegments.join('/');
+    return { slugSegments, slugPath };
+  });
 
-  posts.forEach((post) => {
-    const parts = post.slug.split('/');
-    for (let i = 1; i < parts.length; i++) {
-      folders.add(parts.slice(0, i).join('/'));
+  const folderSlugs = new Set<string>();
+  meta.forEach((item) => {
+    for (let i = 1; i < item.slugSegments.length; i++) {
+      folderSlugs.add(item.slugSegments.slice(0, i).join('/'));
     }
   });
 
-  const postPaths = posts.map((post) => ({
-    params: { segments: post.slug },
+  const postPaths = meta.map((item) => ({
+    params: { segments: item.slugPath },
   }));
-  const folderPaths = Array.from(folders).map((slug) => ({
+  const folderPaths = Array.from(folderSlugs).map((slug) => ({
     params: { segments: slug },
   }));
-
   return [...postPaths, ...folderPaths];
 }
 
 const posts = await getCollection('blog');
+const meta = posts.map((entry) => {
+  const rawPath = entry.id.replace(/^blog\//, '').replace(/\.md$/, '');
+  const rawSegments = rawPath.split('/');
+  const slugSegments = rawSegments.map(slugifySegment);
+  const slugPath = slugSegments.join('/');
+  return { entry, rawSegments, slugSegments, slugPath };
+});
+
 const segmentsRaw = Astro.params.segments;
 const segments = typeof segmentsRaw === 'string'
   ? segmentsRaw.split('/').filter(Boolean)
@@ -34,59 +63,46 @@ const segments = typeof segmentsRaw === 'string'
     : [];
 
 const slugPath = segments.join('/');
-const post = posts.find((p) => p.slug === slugPath) ?? null;
-const Content = post ? (await post.render()).Content : null;
+const postMeta = meta.find((item) => item.slugPath === slugPath) ?? null;
+const Content = postMeta ? (await postMeta.entry.render()).Content : null;
 
-const formatYMD = (d) => {
-  const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
-  return local.toISOString().slice(0, 10);
-};
-
-const titleCase = (value) =>
-  value
-    .split('-')
-    .filter(Boolean)
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
-    .join(' ');
-
-const latestDateFor = (slugPrefix) => {
+const latestDateFor = (slugPrefix: string) => {
   const prefix = slugPrefix ? `${slugPrefix}/` : '';
-  let latest = null;
-  posts.forEach((p) => {
-    if (!prefix || p.slug.startsWith(prefix)) {
-      latest = !latest || p.data.date > latest ? p.data.date : latest;
+  let latest: Date | null = null;
+  meta.forEach((item) => {
+    if (!prefix || item.slugPath.startsWith(prefix)) {
+      latest = !latest || item.entry.data.date > latest ? item.entry.data.date : latest;
     }
   });
   return latest ? formatYMD(latest) : null;
 };
 
-const listAtPath = (pathSegments) => {
-  const folderMap = new Map();
-  const files = [];
+const listAtPath = (slugSegments: string[]) => {
+  const folderMap = new Map<string, { slug: string; label: string; lastUpdated: string | null }>();
+  const files: typeof meta[number][] = [];
 
-  posts.forEach((entry) => {
-    const parts = entry.slug.split('/');
-    if (!pathSegments.every((seg, idx) => parts[idx] === seg)) return;
-    if (parts.length === pathSegments.length) return;
+  meta.forEach((item) => {
+    if (!slugSegments.every((seg, idx) => item.slugSegments[idx] === seg)) return;
+    if (item.slugSegments.length === slugSegments.length) return;
 
-    if (parts.length === pathSegments.length + 1) {
-      files.push(entry);
+    if (item.slugSegments.length === slugSegments.length + 1) {
+      files.push(item);
       return;
     }
 
-    const child = parts[pathSegments.length];
-    if (!folderMap.has(child)) {
-      const slug = [...pathSegments, child].join('/');
-      folderMap.set(child, {
+    const childSlug = item.slugSegments[slugSegments.length];
+    if (!folderMap.has(childSlug)) {
+      const slug = [...slugSegments, childSlug].join('/');
+      folderMap.set(childSlug, {
         slug,
-        label: titleCase(child),
+        label: item.rawSegments[slugSegments.length] ?? childSlug,
         lastUpdated: latestDateFor(slug),
       });
     }
   });
 
   files.sort((a, b) =>
-    a.data.title.localeCompare(b.data.title, 'en', { sensitivity: 'base' }),
+    a.entry.data.title.localeCompare(b.entry.data.title, 'en', { sensitivity: 'base' }),
   );
   const folders = Array.from(folderMap.values()).sort((a, b) =>
     a.label.localeCompare(b.label, 'en', { sensitivity: 'base' }),
@@ -95,43 +111,58 @@ const listAtPath = (pathSegments) => {
   return { folders, files };
 };
 
-const folderSegments = post ? segments.slice(0, -1) : segments;
+const folderSegments = postMeta ? segments.slice(0, -1) : segments;
+const { folders, files } = postMeta ? { folders: [], files: [] } : listAtPath(segments);
+
+const folderLabelMap = new Map<string, string>();
+meta.forEach((item) => {
+  item.slugSegments.forEach((_, idx) => {
+    if (idx === 0) return;
+    const slug = item.slugSegments.slice(0, idx).join('/');
+    const label = item.rawSegments[idx - 1];
+    if (label && !folderLabelMap.has(slug)) {
+      folderLabelMap.set(slug, label);
+    }
+  });
+});
+const heading =
+  folderSegments.length === 0
+    ? 'Blog'
+    : folderLabelMap.get(folderSegments.join('/')) ?? folderSegments[folderSegments.length - 1];
 
 const folderCrumbs = [
   { label: 'Home', href: '/' },
   { label: 'Blog', href: '/blog' },
   ...folderSegments.map((segment, idx) => {
-    const href = `/blog/${folderSegments.slice(0, idx + 1).join('/')}/`;
-    return { label: titleCase(segment), href };
+    const slug = folderSegments.slice(0, idx + 1).join('/');
+    const label = folderLabelMap.get(slug) ?? segment;
+    const href = `/blog/${slug}/`;
+    return { label, href };
   }),
 ];
 
-const breadcrumbs = post
-  ? [...folderCrumbs, { label: post.data.title }]
+const breadcrumbs = postMeta
+  ? [...folderCrumbs, { label: postMeta.entry.data.title }]
   : folderCrumbs.map((crumb, idx) =>
       idx === folderCrumbs.length - 1 ? { ...crumb, href: undefined } : crumb,
     );
-
-const { folders, files } = post ? { folders: [], files: [] } : listAtPath(segments);
-const heading =
-  folderSegments.length === 0 ? 'Blog' : titleCase(folderSegments[folderSegments.length - 1]);
 ---
 
 <BaseLayout
-  title={post ? `${post.data.title} | Blog` : `${heading} | Blog`}
+  title={postMeta ? `${postMeta.entry.data.title} | Blog` : `${heading} | Blog`}
   breadcrumbs={breadcrumbs}
   pageId="page-blog"
 >
   {
-    post ? (
+    postMeta ? (
       <main class="post-page">
         <section class="post-hero">
-          <h1 class="post-title-hero">{post.data.title}</h1>
+          <h1 class="post-title-hero">{postMeta.entry.data.title}</h1>
           <div class="post-meta">
-            <p class="post-date">{formatYMD(post.data.date)}</p>
-            {post.data.tags && post.data.tags.length > 0 && (
+            <p class="post-date">{formatYMD(postMeta.entry.data.date)}</p>
+            {postMeta.entry.data.tags && postMeta.entry.data.tags.length > 0 && (
               <div class="tag-row">
-                {post.data.tags.map((tag) => (
+                {postMeta.entry.data.tags.map((tag) => (
                   <span class="tag">{tag}</span>
                 ))}
               </div>
@@ -163,12 +194,12 @@ const heading =
           ))}
 
           {files.map((entry) => (
-            <a class="entry-card file" href={`/blog/${entry.slug}/`}>
+            <a class="entry-card file" href={`/blog/${entry.slugPath}/`}>
               <span class="entry-icon" aria-hidden="true"><FileIcon /></span>
               <div class="entry-body">
-                <div class="entry-title">{entry.data.title}</div>
+                <div class="entry-title">{entry.entry.data.title}</div>
               </div>
-              <div class="entry-meta">Added: {formatYMD(entry.data.date)}</div>
+              <div class="entry-meta">Added: {formatYMD(entry.entry.data.date)}</div>
             </a>
           ))}
         </section>
