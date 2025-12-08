@@ -10,6 +10,6 @@ heroColor: "#31a5e9"
 ---
 
 - Profit-Taker: Velocitus with Radiation/Corrosive, Rubedo-Lined Barrel + Dual Rounds.
-- Open world: Larkspur Prime for add clear; keep `Automatic Trigger` if you like beams.
+- Open world: Larkspur Prime for add clear; keep [Automatic Trigger] if you like beams.
 - Always slot `Hollowed Bullets` + `Marked Target` for status speed on Archguns.
 - Grab an Archgun Riven if cheap; crit/multi/status are the priorities.

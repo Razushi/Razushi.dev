@@ -35,19 +35,24 @@ It’s effectively the strongest "throwing lightning" miracle and scales extreme
 | ------------------ | ---------------------------- |
 | FP Cost            | 55                           |
 | Faith Requirement  | 40                           |
-| Max Damage Tier    | ~60–70 Faith                 |
-| Spell Buff Scaling | Strongest on Yorshka’s Chime |
+| ~~Max Damage Tier    | ~60–70 Faith~~                 |
+| ~~Spell Buff Scaling~~ | ~~Strongest on Yorshka’s Chime~~ |
 
----
+# Testing TEsting
+
+Testing
+
+` what about this?`
+
+- `and what about this??`
 
 ## Usage Notes
 
 * Deals **two hits**:
-
   1. The spear itself (projectile)
   2. A small lightning AoE on impact
-* Damage is boosted significantly when cast with:
 
+* Damage is boosted significantly when cast with:
   * Yorshka’s Chime
   * Ring of the Sun’s First Born
   * Lightning Clutch Ring
@@ -56,7 +61,6 @@ It’s effectively the strongest "throwing lightning" miracle and scales extreme
 ---
 
 ## Example PvE Cast Rotation
-
 ```text
 1. Sacred Oath (optional)
 2. Lightning Blade (if using infused weapon)

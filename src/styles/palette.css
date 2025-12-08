@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&display=swap');
+
 :root {
   /* Core palette */
   --core-red: #d45658;
@@ -36,6 +38,22 @@
   --accent-copper: var(--accent-highlight);
   --accent-rose: var(--core-magenta);
   --accent-cyan: var(--core-cyan);
+  --accent-soft: color-mix(in srgb, var(--accent-highlight) 60%, #ffffff);
+  --code-bg: color-mix(in srgb, var(--accent-highlight) 10%, #0f1216);
+  --code-inline-bg: color-mix(in srgb, var(--accent-highlight) 20%, #0f1216);
+  --blockquote-bg: color-mix(in srgb, #15181c 70%, #0f1216);
+  --text-secondary: var(--muted);
+  /* prose controls */
+  --prose-font: 'Lora', 'Times New Roman', serif;
+  --prose-mono: 'Reddit Mono', 'FiraCode', 'Geist Mono', 'Share Tech', 'Geist', 'Inter', system-ui, -apple-system, monospace;
+  --prose-size: 1rem;
+  --prose-line: 1.5;
+  --prose-weight: 400;
+  --prose-heading-size-1: 2.1rem;
+  --prose-heading-size-2: 1.6rem;
+  --prose-heading-size-3: 1.3rem;
+  --prose-heading-size-4: 1.1rem;
+  --prose-heading-weight: 700;
 
   --radius-lg: 3px;
   --radius-md: 3px;
@@ -68,6 +86,10 @@
   --shadow: 0 6px 13px var(--shader-color);
   --vignette-color: var(--shader-color);
   --shell-foreground: var(--text-light);
+  --accent-soft: color-mix(in srgb, var(--accent-highlight) 60%, var(--bg));
+  --code-bg: color-mix(in srgb, var(--accent-highlight) 12%, var(--bg));
+  --code-inline-bg: color-mix(in srgb, var(--accent-highlight) 22%, var(--bg));
+  --blockquote-bg: color-mix(in srgb, #15181c 75%, var(--bg));
 }
 
 [data-theme="light"] {
@@ -83,6 +105,10 @@
   --vignette-color: var(--shader-color);
   --shell-foreground: var(--text-black);
   --grid-line: rgba(0, 0, 0, 0.08);
+  --accent-soft: color-mix(in srgb, var(--accent-highlight) 60%, var(--text));
+  --code-bg: color-mix(in srgb, var(--accent-highlight) 12%, var(--bg));
+  --code-inline-bg: color-mix(in srgb, var(--accent-highlight) 18%, var(--bg));
+  --blockquote-bg: color-mix(in srgb, var(--accent-highlight) 6%, var(--bg));
 }
 
 [data-theme="night"] {
@@ -97,6 +123,10 @@
   --shadow: 0 6px 13px var(--shader-color);
   --vignette-color: var(--shader-color);
   --shell-foreground: var(--text-light);
+  --accent-soft: color-mix(in srgb, var(--accent-highlight) 60%, var(--bg));
+  --code-bg: color-mix(in srgb, var(--accent-highlight) 12%, var(--bg));
+  --code-inline-bg: color-mix(in srgb, var(--accent-highlight) 22%, var(--bg));
+  --blockquote-bg: color-mix(in srgb, #15181c 75%, var(--bg));
 }
 
 *,
@@ -485,7 +515,7 @@ h1 {
 }
 
 .page-wrap {
-  padding: 0.5rem 0 1.5rem;
+  padding-bottom: var(--card-padding);
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -824,28 +854,228 @@ h1 {
   margin-top: auto;
 }
 
-.prose {
-  max-width: 760px;
-  margin: 0 auto;
-  line-height: 1.75;
-  font-size: 1.05rem;
+.prose,
+.prose-content {
+  line-height: 1.55;
+  font-size: var(--prose-size);
+  color: var(--muted);
+  line-height: var(--prose-line);
+}
+
+.prose :is(p, li) {
+  font-family: var(--prose-mono);
+  color: var(--text);
+  font-weight: var(--prose-weight);
+}
+
+.prose-content :is(p, li) {
+  font-family: var(--prose-font);
+  color: var(--text);
+  font-weight: var(--prose-weight);
+}
+
+.prose p,
+.prose-content p {
+  margin: 0 0 1.1rem;
+}
+
+.prose :is(h1, h2, h3, h4, h5, h6),
+.prose-content :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--text);
+  font-family: 'Share Tech', 'Geist Mono', 'FiraCode', 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.2;
+  margin: 0;
 }
 
 .prose h1,
+.prose-content h1 {
+  margin: var(--card-padding) 0;
+  font-size: var(--prose-heading-size-1);
+  border-left: 4px solid var(--accent-highlight);
+  padding-left: 0.75rem;
+  text-transform: none;
+  letter-spacing: 0.06em;
+  font-weight: var(--prose-heading-weight);
+}
+
 .prose h2,
-.prose h3 {
+.prose-content h2 {
   margin-top: 2rem;
-  margin-bottom: 0.8rem;
-}
-
-.prose p {
   margin-bottom: 1rem;
-  color: var(--muted);
+  font-size: var(--prose-heading-size-2);
+  text-transform: none;
+  letter-spacing: 1px;
+  font-weight: var(--prose-heading-weight);
 }
 
-.prose a {
+.prose h3,
+.prose-content h3 {
+  margin-top: 1.6rem;
+  margin-bottom: 0.8rem;
+  font-size: var(--prose-heading-size-3);
+  font-weight: var(--prose-heading-weight);
+}
+
+.prose h4,
+.prose-content h4 {
+  margin-top: 1.4rem;
+  margin-bottom: 0.6rem;
+  font-size: var(--prose-heading-size-4);
+  text-transform: none;
+  letter-spacing: 0.05em;
+  font-weight: var(--prose-heading-weight);
+}
+
+.prose :is(ul, ol),
+.prose-content :is(ul, ol) {
+  margin: 0 0 1rem;
+}
+
+.prose li > :is(ul, ol),
+.prose-content li > :is(ul, ol) {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+}
+
+.prose li > p,
+.prose-content li > p {
+  margin: 0;
+}
+
+.prose li,
+.prose-content li {
+  margin-bottom: 0.35rem;
+}
+
+.prose a,
+.prose-content a {
   color: var(--accent-highlight);
-  text-decoration: underline;
+  text-decoration: none;
+  font-weight: 700;
+  transition: color var(--transition), border-color var(--transition);
+}
+
+.prose a:hover,
+.prose-content a:hover {
+  color: var(--accent-soft);
+}
+
+.prose code:not(pre code),
+.prose-content code:not(pre code) {
+  background: var(--code-inline-bg);
+  padding: 2px 4px;
+  border-radius: var(--radius-sm);
+  font-family: 'Reddit Mono', 'FiraCode', 'Geist Mono', 'Share Tech', 'Geist', 'Inter', system-ui, -apple-system, monospace;
+  font-size: 0.95rem;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.prose pre,
+.prose-content pre {
+  background: var(--code-bg);
+  padding: 1rem;
+  border-left: 4px solid var(--accent-highlight);
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  margin: 1.4rem 0;
+  box-shadow: inset 0 0 0 1px var(--border);
+  color: var(--text-light);
+}
+
+.prose pre code,
+.prose-content pre code {
+  font-family: 'Reddit Mono', 'FiraCode', 'Geist Mono', 'Share Tech', 'Geist', 'Inter', system-ui, -apple-system, monospace;
+  font-size: 0.95rem;
+  color: var(--text-light);
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+.prose blockquote,
+.prose-content blockquote {
+  background: var(--blockquote-bg);
+  border-left: 4px solid var(--accent-highlight);
+  padding: 1rem 1.5rem;
+  font-style: italic;
+  color: var(--text-secondary);
+  margin: 1.5rem 0;
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+.prose blockquote p,
+.prose-content blockquote p {
+  color: inherit;
+  margin: 0;
+}
+
+.prose img,
+.prose-content img {
+  max-width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  display: block;
+}
+
+.prose figure,
+.prose-content figure {
+  margin: 0;
+  text-align: center;
+}
+
+.prose figcaption,
+.prose-content figcaption {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 0.4rem;
+}
+
+.prose table,
+.prose-content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Geist Mono', 'Share Tech', 'FiraCode', 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 0.95rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--shader-color) 20%, transparent);
+}
+
+.prose th,
+.prose td,
+.prose-content th,
+.prose-content td {
+  border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+  padding: 0.6rem;
+  text-align: left;
+}
+
+.prose th,
+.prose-content th {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  background: var(--surface);
+  font-weight: 700;
+  border-bottom: 1px solid var(--border);
+}
+
+.prose tr:nth-child(odd),
+.prose-content tr:nth-child(odd) {
+  background: var(--surface);
+}
+
+.prose tr:nth-child(even),
+.prose-content tr:nth-child(even) {
+  background: var(--bg);
+}
+
+.prose hr,
+.prose-content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2rem 0;
 }
 
 .palette-section {
