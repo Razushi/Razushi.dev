@@ -1,79 +1,463 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const posts = await getCollection("blog");
+posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const recent = posts.slice(0, 3);
+const formatYMD = (d: Date) => {
+  const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 10);
+};
 ---
 
-<BaseLayout title="Vestige | Notes & Blog" stickyFooter={true}>
-  <section class="landing">
-    <div class="hero-card">
-      <div class="avatar" aria-hidden="true">R</div>
-      <p class="eyebrow">Greetings.</p>
-      <h1>I use NixOS, btw.</h1>
+<BaseLayout title="Vestige | Expedition Log" stickyFooter={true} pageId="page-home">
+  <section class="landing-shell">
+    <div class="grid-overlay" aria-hidden="true"></div>
+    <div class="hero">
+      <div class="hero-meta">
+        <p class="eyebrow">Incandescent-26 // VESTIGE NODE</p>
+        <div class="status-row">
+          <span class="status-badge danger">status: ACTIVE</span>
+          <span class="status-badge neutral">signal: UNSTABLE</span>
+          <span class="status-badge accent">downtime: 26,280H</span>
+        </div>
+      </div>
+      <h1 class="hero-title">EXPEDITION SURVIVED</h1>
       <p class="lede">
-        Every fleeting skill must be learnt. Every secret must be archived. Such
-        is the burden of the self-proclaimed bearer of intellect.
+        I've done it. I've survived UTS
       </p>
       <div class="cta-row">
-        <a class="ghost-button" href="/blog">Blog posts</a>
-        <a class="ghost-button" href="/about">About me</a>
+        <a class="primary-button" href="/blog">Enter archive</a>
+        <a class="ghost-button" href="/about">Meet the Prisoner</a>
+        <a class="ghost-button subtle" href="/tests">Diagnostics</a>
+      </div>
+      <div class="metrics">
+        <div class="metric">
+          <p class="label">Artifacts Logged</p>
+          <p class="value">{posts.length}</p>
+        </div>
+        <div class="metric">
+          <p class="label">Tags Tracked</p>
+          <p class="value">~</p>
+        </div>
+        <div class="metric">
+          <p class="label">Systems</p>
+          <p class="value">NixOS · Hyprland · Helix</p>
+        </div>
       </div>
     </div>
+
+    <div class="panel-grid">
+      <section class="panel">
+        <header class="panel-head">
+          <p class="eyebrow">Dispatch</p>
+          <span class="divider"></span>
+        </header>
+        <ul class="dispatch-list">
+          <li>
+            <span class="dot"></span>
+            <div>
+              <p class="dispatch-title">Field Notes / Blog</p>
+              <p class="dispatch-body">Routes, builds, and troubleshooting logs.</p>
+            </div>
+            <a class="dispatch-link" href="/blog">Open</a>
+          </li>
+          <li>
+            <span class="dot"></span>
+            <div>
+              <p class="dispatch-title">Operator Brief / About</p>
+              <p class="dispatch-body">Who runs this node and why it exists.</p>
+            </div>
+            <a class="dispatch-link" href="/about">Open</a>
+          </li>
+          <li>
+            <span class="dot"></span>
+            <div>
+              <p class="dispatch-title">Diagnostics / Tests</p>
+              <p class="dispatch-body">Color pipelines and component experiments.</p>
+            </div>
+            <a class="dispatch-link" href="/tests">Open</a>
+          </li>
+        </ul>
+      </section>
+
+      <section class="panel">
+        <header class="panel-head">
+          <p class="eyebrow">Recent Signals</p>
+          <span class="divider"></span>
+        </header>
+        <div class="recent-list">
+          {recent.map((post) => (
+            <a class="recent-card" href={`/blog/${post.slug}/`}>
+              <div class="recent-meta">
+                <span class="pill">{formatYMD(post.data.date)}</span>
+                {(post.data.tags ?? []).slice(0, 2).map((tag) => (
+                  <span class="pill muted">{tag}</span>
+                ))}
+              </div>
+              <h3>{post.data.title}</h3>
+              <p>{post.data.description}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section class="panel">
+        <header class="panel-head">
+          <p class="eyebrow">Loadout</p>
+          <span class="divider"></span>
+        </header>
+        <div class="loadout-grid">
+          <div>
+            <p class="label">Primary</p>
+            <p class="value">NixOS / Neovim / TMUX</p>
+          </div>
+          <div>
+            <p class="label">Stack</p>
+            <p class="value">Astro + Svelte, TypeScript</p>
+          </div>
+          <div>
+            <p class="label">Focus</p>
+            <p class="value">Guides, builds, systems hygiene</p>
+          </div>
+          <div>
+            <p class="label">Theme</p>
+            <p class="value">Dark / Light / Night (cycle)</p>
+          </div>
+        </div>
+      </section>
+    </div>
   </section>
-
-  <style>
-    .landing {
-      display: grid;
-      place-items: center;
-      padding: 3rem 1.25rem;
-      text-align: center;
-      position: relative;
-      flex: 1;
-    }
-
-    .hero-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.8rem;
-      max-width: 720px;
-      padding: 0 0.5rem;
-    }
-
-    .avatar {
-      width: 88px;
-      height: 88px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: radial-gradient(
-        circle at 30% 30%,
-        var(--accent-highlight),
-        #2f3a3b
-      );
-      color: var(--bg);
-      font-weight: 800;
-      font-size: 1.4rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-      border: 1px solid var(--border);
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(2.3rem, 4vw, 2.8rem);
-    }
-
-    .lede {
-      margin: 0;
-      color: var(--muted);
-      max-width: 640px;
-      line-height: 1.7;
-    }
-
-    .cta-row {
-      display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-top: 0.5rem;
-    }
-  </style>
 </BaseLayout>
+
+<style>
+  .landing-shell {
+    position: relative;
+    display: grid;
+    gap: 1.5rem;
+    padding: 0;
+  }
+
+  .grid-overlay {
+    position: absolute;
+    inset: 0.5rem 0.5rem 0 0.5rem;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 36px 36px;
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: var(--card-padding);
+    border-radius: var(--radius-lg);
+    background: color-mix(in srgb, var(--bg) 70%, var(--bg-alt));
+    border: none;
+    box-shadow:
+      inset 0 0 0 1px color-mix(in srgb, var(--border) 55%, transparent),
+      0 16px 40px color-mix(in srgb, var(--shader-color) 35%, transparent);
+    font-family: var(--font-body);
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--accent-highlight) 12%, transparent), transparent 35%);
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  .hero-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .status-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    font-family: var(--font-display);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 700;
+    background: color-mix(in srgb, var(--bg-alt) 70%, var(--bg));
+  }
+
+  .status-badge.danger {
+    color: var(--accent-highlight);
+    border-color: color-mix(in srgb, var(--accent-highlight) 40%, var(--border));
+  }
+
+  .status-badge.neutral {
+    color: var(--text);
+  }
+
+  .status-badge.accent {
+    color: var(--accent-highlight);
+  }
+
+  .hero-title {
+    font-size: clamp(2.6rem, 6vw, 3.6rem);
+    margin: 0.4rem 0 0.35rem;
+    letter-spacing: 0.12em;
+    font-family: var(--font-display);
+  }
+
+  .lede {
+    margin: 0 0 1rem;
+    color: var(--muted);
+    max-width: 880px;
+    font-family: var(--font-body);
+  }
+
+  .cta-row {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .primary-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.65rem 1.2rem;
+    border-radius: var(--radius-md);
+    background: var(--accent-highlight);
+    color: var(--bg);
+    border: 1px solid var(--accent-highlight);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    box-shadow: 0 8px 20px color-mix(in srgb, var(--accent-highlight) 35%, transparent);
+    transition: transform var(--transition), filter var(--transition);
+    font-family: var(--font-display);
+  }
+
+  .primary-button:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.02);
+  }
+
+  .ghost-button.subtle {
+    border-color: var(--border);
+    color: var(--text);
+    font-family: var(--font-display);
+  }
+
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .metric {
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--bg-alt) 55%, var(--bg));
+    font-family: var(--font-body);
+  }
+
+  .label {
+    margin: 0 0 0.3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-family: var(--font-body);
+  }
+
+  .value {
+    margin: 0;
+    font-weight: 800;
+    font-family: var(--font-body);
+  }
+
+  .panel-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--card-padding);
+  }
+
+  .panel {
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--bg) 85%, var(--bg-alt));
+    border-radius: var(--radius-lg);
+    box-shadow: 0 10px 24px color-mix(in srgb, var(--shader-color) 24%, transparent);
+    display: grid;
+    gap: 0.75rem;
+    padding: var(--card-padding);
+    align-content: start;
+    font-family: var(--font-body);
+  }
+
+  .panel-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+    align-self: start;
+  }
+
+  .panel-head .eyebrow {
+    margin: 0;
+    min-height: 1em;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .divider {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  .dispatch-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .dispatch-list li {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 0.8rem;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.75rem;
+    background: color-mix(in srgb, var(--bg-alt) 60%, var(--bg));
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--accent-highlight);
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent-highlight) 25%, transparent);
+  }
+
+  .dispatch-title {
+    margin: 0;
+    font-weight: 800;
+    font-family: var(--font-display);
+  }
+
+  .dispatch-body {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-family: var(--font-body);
+  }
+
+  .dispatch-link {
+    color: var(--accent-highlight);
+    font-weight: 800;
+    text-decoration: none;
+    font-family: var(--font-display);
+  }
+
+  .recent-list {
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .recent-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 0.85rem 1rem;
+    text-decoration: none;
+    color: var(--text);
+    background: color-mix(in srgb, var(--bg-alt) 60%, var(--bg));
+    display: grid;
+    gap: 0.35rem;
+    transition: border-color var(--transition), transform var(--transition);
+  }
+
+  .recent-card:hover {
+    border-color: var(--accent-highlight);
+    transform: translateY(-1px);
+  }
+
+  .recent-card h3 {
+    margin: 0;
+    letter-spacing: 0.05em;
+    font-family: var(--font-display);
+  }
+
+  .recent-card p {
+    margin: 0;
+    color: var(--muted);
+    font-family: var(--font-body);
+  }
+
+  .recent-meta {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.18rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    font-family: var(--font-display);
+  }
+
+  .pill.muted {
+    color: var(--muted);
+  }
+
+  .loadout-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .loadout-grid > div {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 0.85rem;
+    background: color-mix(in srgb, var(--bg-alt) 55%, var(--bg));
+    font-family: var(--font-body);
+  }
+
+  @media (max-width: 720px) {
+    .hero-title {
+      letter-spacing: 0.08em;
+    }
+
+    .dispatch-list li {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "dot title"
+        "body body"
+        "link link";
+    }
+  }
+</style>

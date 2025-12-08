@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech&display=swap');
 
 :root {
   /* Core palette */
@@ -43,9 +43,11 @@
   --code-inline-bg: color-mix(in srgb, var(--accent-highlight) 20%, #0f1216);
   --blockquote-bg: color-mix(in srgb, #15181c 70%, #0f1216);
   --text-secondary: var(--muted);
+  --font-display: 'Share Tech', 'Share Tech Mono', system-ui, -apple-system, sans-serif;
+  --font-body: 'Share Tech', 'Share Tech Mono', system-ui, -apple-system, sans-serif;
   /* prose controls */
-  --prose-font: 'Lora', 'Times New Roman', serif;
-  --prose-mono: 'Reddit Mono', 'FiraCode', 'Geist Mono', 'Share Tech', 'Geist', 'Inter', system-ui, -apple-system, monospace;
+  --prose-font: var(--font-body);
+  --prose-mono: var(--font-body);
   --prose-size: 1rem;
   --prose-line: 1.5;
   --prose-weight: 400;
@@ -135,11 +137,16 @@
   box-sizing: border-box;
 }
 
+p,
+li {
+  font-family: var(--font-body);
+}
+
 html,
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Geist Mono', 'Share Tech', 'FiraCode', 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body);
   background: var(--bg);
   color: var(--text);
   min-height: 100%;
@@ -218,6 +225,15 @@ a {
 
 h1 {
   text-transform: capitalize;
+  font-family: var(--font-display);
+}
+
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
 }
 
 .post-header h1 {
@@ -226,7 +242,7 @@ h1 {
 
 .caps {
   text-transform: uppercase;
-  font-family: 'Share Tech', 'Geist Mono', 'FiraCode', 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-display);
   letter-spacing: 0.08em;
 }
 
@@ -882,7 +898,7 @@ h1 {
 .prose :is(h1, h2, h3, h4, h5, h6),
 .prose-content :is(h1, h2, h3, h4, h5, h6) {
   color: var(--text);
-  font-family: 'Share Tech', 'Geist Mono', 'FiraCode', 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-display);
   line-height: 1.2;
   margin: 0;
 }
@@ -965,7 +981,7 @@ h1 {
   background: var(--code-inline-bg);
   padding: 2px 4px;
   border-radius: var(--radius-sm);
-  font-family: 'Reddit Mono', 'FiraCode', 'Geist Mono', 'Share Tech', 'Geist', 'Inter', system-ui, -apple-system, monospace;
+  font-family: var(--font-body);
   font-size: 0.95rem;
   color: var(--text);
   border: 1px solid var(--border);
@@ -985,7 +1001,7 @@ h1 {
 
 .prose pre code,
 .prose-content pre code {
-  font-family: 'Reddit Mono', 'FiraCode', 'Geist Mono', 'Share Tech', 'Geist', 'Inter', system-ui, -apple-system, monospace;
+  font-family: var(--font-body);
   font-size: 0.95rem;
   color: var(--text-light);
   background: transparent;
@@ -1035,7 +1051,7 @@ h1 {
 .prose-content table {
   width: 100%;
   border-collapse: collapse;
-  font-family: 'Geist Mono', 'Share Tech', 'FiraCode', 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body);
   font-size: 0.95rem;
   background: var(--surface);
   border: 1px solid var(--border);
