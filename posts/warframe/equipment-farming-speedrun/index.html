@@ -1,0 +1,94 @@
+<!DOCTYPE html><html lang="en"> <head><script>
+      (() => {
+        const storageKey = "epithet-theme";
+        const storageAccentKey = "epithet-accent";
+        const root = document.documentElement;
+        const safeGet = (key) => {
+          try {
+            return localStorage.getItem(key);
+          } catch {
+            return null;
+          }
+        };
+        const storedTheme = safeGet(storageKey);
+        const theme = storedTheme || "night";
+        root.setAttribute("data-theme", theme);
+        root.setAttribute("data-theme-state", theme);
+        root.style.colorScheme = theme === "light" ? "light" : "dark";
+
+        const storedAccent = safeGet(storageAccentKey);
+        if (storedAccent) {
+          root.style.setProperty("--accent-highlight", storedAccent);
+          root.style.setProperty("--accent-teal", storedAccent);
+          root.style.setProperty("--accent-copper", storedAccent);
+        }
+
+        // expose for later scripts and set the toggle state as soon as DOM is ready
+        window.__vestigeTheme = { theme, accent: storedAccent };
+        document.addEventListener("DOMContentLoaded", () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          btn.setAttribute("data-theme-state", theme);
+          btn.setAttribute("aria-label", `Change theme (current: ${theme})`);
+        });
+      })();
+    </script><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Minmal farm to maximum content - Vestige</title><meta name="description" content="Least amount of gear required to do as much content as possible."><link rel="stylesheet" href="/_astro/about.CDaF6ess.css"></head> <body class="site-shell footer-static"> <header class="site-header"> <div class="wrap nav"> <a class="brand " href="/"> <span><svg class="icon-fire" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-astro-cid-obibzib7> <path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4" data-astro-cid-obibzib7></path> </svg> </span>
+Vestige
+</a> <nav class="nav-links"> <a class href="/blog">Blog</a> <a class href="/about">About</a> </nav> <button class="theme-toggle" type="button" id="theme-toggle" aria-label="Change theme"> <svg class="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"> <circle cx="12" cy="12" r="4"></circle> <line x1="12" y1="3" x2="12" y2="5"></line> <line x1="12" y1="19" x2="12" y2="21"></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line> <line x1="3" y1="12" x2="5" y2="12"></line> <line x1="19" y1="12" x2="21" y2="12"></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line> </svg> <svg class="icon icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke-linecap="round" stroke-linejoin="round"></path> </svg> <svg class="icon icon-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"> <path d="m12 3 2.09 5.74L20 9.27l-4.5 3.9L16.18 19 12 15.98 7.82 19l0.68-5.83L4 9.27l5.91-0.53L12 3Z" stroke-linecap="round" stroke-linejoin="round"></path> </svg> </button> </div> </header> <div class="wrap page-wrap"> <div class="card-panel content-panel">   <article class="prose"> <p class="eyebrow" style="margin-bottom:0.5rem;">Tue May 27 2025</p> <h1>Minmal farm to maximum content</h1> <div class="tag-list" style="margin-bottom:1.5rem;"> <span class="tag">warframe</span><span class="tag">meta</span><span class="tag">speedrun</span> </div> <h1 id="for-mr8-and-below">For MR8 and below,</h1>
+<p>All these should cover basically every single possible base. These are all weapons you <em>should</em> but aren’t a <em>must</em> have, this list does not include: arcanes, pets, archon shards) for minimum account investment + things to focus on and grab becuase quite simply that’s not early enough:</p>
+<h2 id="melee">Melee:</h2>
+<ul>
+<li>Ceramic Dagger Incarnon (Good for [Secondary Outburst])</li>
+<li>Zaw + Exodia Contagion (very easy and early minus the exodia contagion but they’re just 8p and you just need 1 <a href="https://warframe.market/items/exodia_contagion">https://warframe.market/items/exodia_contagion</a>)</li>
+<li>Xoris (you’ll use this for sisters + forced elec proc = Melee Influence absolutely fucks esp if you mod for gas/blast + bane + xata’s whisper)</li>
+<li>Okina Incarnon (Movement statstick before praedos)</li>
+</ul>
+<h2 id="secondary">Secondary:</h2>
+<ul>
+<li>Epitath (primer) but needs mr 8/14, (yes it has a prime varient)</li>
+<li>Kuva Nukor (primer) / Tenet Cycron (primer too) but you can acquire it as soon as you finish teh quests so like literally mr5 or something</li>
+<li>Kompressa (primer / murder)</li>
+</ul>
+<h2 id="primary">Primary:</h2>
+<ul>
+<li>Tenet Arca Plasmor (I FUCKING LOVE THIS GUN), soon as you finish quests you can grab, + you get xoris along the way [deadlock protocol] is a req to sisters</li>
+<li>Cedo, needs mr8 but you can get it for just standing from entrati sydiacate</li>
+<li>Dread, needs a bit of rng but it drops from stalker and cooks even in base</li>
+</ul>
+<h1 id="later-mr">Later MR</h1>
+<p>Once higher MR, you’ll want to fill out your inventory with more stuff later tho, some more recommended stuff to also grab later are:</p>
+<h2 id="melee-1">Melee:</h2>
+<ul>
+<li>Praedos Incarnon, (movement)</li>
+<li>Quassus Prime (good for archon hunts + ST nuking)</li>
+<li>Coda Motovore (really fun melee)</li>
+<li>Innodem Incarnon (dagger that’s also a polearm)</li>
+</ul>
+<h2 id="primary-1">Primary:</h2>
+<ul>
+<li>Phantasma Prime (great laser beam to kill via status)</li>
+<li>Torid Incarnon (needs incarnon but imo its not really that strong outside of ST)</li>
+<li>Boar Incarnon (better than torid imo)</li>
+<li>Tenet Glaxion (great for energy generation with the augment)</li>
+<li>Convextric</li>
+<li>Argonak (interesting mechanic with [amalgam argonak]</li>
+<li>Paris Prime (great statstick so your pets can murder with status)</li>
+<li>Phenmor Incarnon (its great)</li>
+</ul>
+<h2 id="secondary-1">Secondary:</h2>
+<ul>
+<li>Grimore (this one you get from… the cavia quest but the invocation and shit is what makes it pretty solid to have passively)</li>
+<li>Laetum (both from Chysalith after completing [Angels of Zariman]</li>
+<li>Ocucor</li>
+<li>Akarius Prime (its nice)</li>
+<li>Ballistica Prime (has a niche use for duplicating enemies, so you can scan the invis)</li>
+</ul>
+<h1 id="for-warframes">For warframes:</h1>
+<p>Volt/Wisp/Khora will cover, from 70% of all content outside of niche activities (PT, EDA). 25% comes from having a bunch of different warframes, (Nekros, Mirage/Saryn, Xaku, Revenant, Sevagoth, Titania, Protea) to multi-class and flex for activities and then the last 5% comes from prepping for really niche activities.</p>
+<p>i.e Chroma (+ secura lecta for the funnies), Ivara for spy missions, Banshee for liches, these cover the last 5%</p>
+<p>Every other warframe is basically a “its ur turn to play this role” for “this activity” (im not sure waht to call it) but like, i.e when farming, the roles are like, khora, nekros, wisp, nova. Khora’s recommended because shes farming so GOOD like everywhere + slots everywhere, so in this case like, Nekros/Nova are ‘flex’ picks, not bad, just flexible.</p>
+<h1 id="amendment">AMENDMENT:</h1>
+<p>SLIGHT DIFFERENCE BETWEEN MR’s, LOW MR = low expectations of builds becuase they assume you cant perform as flexibly as them, in this case, nekros because works so much more universally is actually the typical expected person to be used for a newbie when farming, as their khora, typically doesn’t have the same level of investment (archon shards, helminth, friends.)</p>
+<p>it also means as a HIGH MR, you should be able to flex pick.</p>
+<p>For farming btw: I wholeheartedly recommend Khora over nekros as its just way more interactive and + seeing funny damage numbers is way more interesting than sitting there in a corner afk’ing even though sometimes you just want to do exactly that.</p> <div style="margin-top:3rem;"> <a class="ghost-button" href="/posts">Back to posts</a> </div> </article>  </div> </div> <footer class="site-footer footer-static"> <div class="wrap footer-bar"> <div class="footer-text">
+Copyright © Razushi 2025 </div> <a class="footer-link" href="https://github.com/Razushi" target="_blank" rel="noreferrer" aria-label="GitHub"> <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"> <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path> <path d="M9 18c-4.51 2-5-2-7-2"></path> </svg> <span class="sr-only">GitHub</span> </a> </div> </footer> <script type="module">const n=["dark","light","night"],i="epithet-theme",h="epithet-accent",e=document.documentElement,c=document.getElementById("theme-toggle"),a=(()=>{try{return localStorage.getItem(h)}catch{return null}})(),d=a||getComputedStyle(e).getPropertyValue("--accent-highlight").trim()||"#d45658",g=t=>{e.style.setProperty("--accent-highlight",t),e.style.setProperty("--accent-teal",t),e.style.setProperty("--accent-copper",t)},o=t=>{e.dataset.theme=t,e.dataset.themeState=t,g(a||d),c&&(c.setAttribute("data-theme-state",t),c.setAttribute("aria-label",`Change theme (current: ${t})`));try{localStorage.setItem(i,t)}catch{}},m=window.__vestigeTheme?.theme,u=m||"night";o(u);c?.addEventListener("click",()=>{const t=e.dataset.theme||"dark",r=c.getAttribute("data-theme-state")||t,s=n.indexOf(r),l=n[(s+1)%n.length];o(l)});</script></body></html>

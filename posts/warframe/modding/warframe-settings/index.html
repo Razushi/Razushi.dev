@@ -1,0 +1,129 @@
+<!DOCTYPE html><html lang="en"> <head><script>
+      (() => {
+        const storageKey = "epithet-theme";
+        const storageAccentKey = "epithet-accent";
+        const root = document.documentElement;
+        const safeGet = (key) => {
+          try {
+            return localStorage.getItem(key);
+          } catch {
+            return null;
+          }
+        };
+        const storedTheme = safeGet(storageKey);
+        const theme = storedTheme || "night";
+        root.setAttribute("data-theme", theme);
+        root.setAttribute("data-theme-state", theme);
+        root.style.colorScheme = theme === "light" ? "light" : "dark";
+
+        const storedAccent = safeGet(storageAccentKey);
+        if (storedAccent) {
+          root.style.setProperty("--accent-highlight", storedAccent);
+          root.style.setProperty("--accent-teal", storedAccent);
+          root.style.setProperty("--accent-copper", storedAccent);
+        }
+
+        // expose for later scripts and set the toggle state as soon as DOM is ready
+        window.__vestigeTheme = { theme, accent: storedAccent };
+        document.addEventListener("DOMContentLoaded", () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          btn.setAttribute("data-theme-state", theme);
+          btn.setAttribute("aria-label", `Change theme (current: ${theme})`);
+        });
+      })();
+    </script><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Optimised Game Settings - Vestige</title><meta name="description" content="optimised game settings for best gameplay, or at least no longer miserable gameplay"><link rel="stylesheet" href="/_astro/about.CDaF6ess.css"></head> <body class="site-shell footer-static"> <header class="site-header"> <div class="wrap nav"> <a class="brand " href="/"> <span><svg class="icon-fire" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-astro-cid-obibzib7> <path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4" data-astro-cid-obibzib7></path> </svg> </span>
+Vestige
+</a> <nav class="nav-links"> <a class href="/blog">Blog</a> <a class href="/about">About</a> </nav> <button class="theme-toggle" type="button" id="theme-toggle" aria-label="Change theme"> <svg class="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"> <circle cx="12" cy="12" r="4"></circle> <line x1="12" y1="3" x2="12" y2="5"></line> <line x1="12" y1="19" x2="12" y2="21"></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line> <line x1="3" y1="12" x2="5" y2="12"></line> <line x1="19" y1="12" x2="21" y2="12"></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line> </svg> <svg class="icon icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke-linecap="round" stroke-linejoin="round"></path> </svg> <svg class="icon icon-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"> <path d="m12 3 2.09 5.74L20 9.27l-4.5 3.9L16.18 19 12 15.98 7.82 19l0.68-5.83L4 9.27l5.91-0.53L12 3Z" stroke-linecap="round" stroke-linejoin="round"></path> </svg> </button> </div> </header> <div class="wrap page-wrap"> <div class="card-panel content-panel">   <article class="prose"> <p class="eyebrow" style="margin-bottom:0.5rem;">Tue May 27 2025</p> <h1>Optimised Game Settings</h1> <div class="tag-list" style="margin-bottom:1.5rem;"> <span class="tag">warframe</span><span class="tag">qol</span><span class="tag">settings</span> </div> <h2 id="gameplay">Gameplay</h2>
+<p>Reload with Context Action Input (OFF)</p>
+<p>Melee Auto Targetting (OFF, doesnt matter too much though as its that… intrusive)</p>
+<p>Align Attacks to Camera: (OFF) (no longer yanks your melee to your camera so you have to swing your camera around to turn where you aim, also makes the game’s melee feel so much nicer as you slam down without needing to be schizophrenic)</p>
+<h1 id="system">System:</h1>
+<p>Legacy Colour Pallates: OFF (default) (Note: swapping back and forth will nuke your favourited colours curation)</p>
+<h2 id="network">Network:</h2>
+<p>Region: N/A or Asia (any works but these are most popular, I find people even in australia)</p>
+<p>Matchmaking Ping Limit (up to you, 300 is default)</p>
+<p>Enable cross platform play: ON</p>
+<h1 id="social">Social:</h1>
+<h2 id="chat">Chat:</h2>
+<ul>
+<li>
+<p>Region Chat (off)</p>
+</li>
+<li>
+<p>Q&#x26;A (on)</p>
+</li>
+<li>
+<p>Recruiting (on)</p>
+</li>
+<li>
+<p>Trade (OFF OFF OFF OFF OFF OFF OFF OFF OFF)</p>
+</li>
+<li>
+<p>Show chat mesage timestamps (on)</p>
+</li>
+<li>
+<p>inline private messages (OFF) (ON by default) (OFF, means that whispers will be kept to the same person, they dont interrupt others)</p>
+</li>
+<li>
+<p>enable profanity filter (off) (Optional)</p>
+</li>
+</ul>
+<h2 id="chat-appearance">Chat Appearance:</h2>
+<ul>
+<li>:) -> :SMILE: Conversion (OFF) that way we can do smiley faces</li>
+</ul>
+<h1 id="interface">Interface:</h1>
+<p>Adjust HUD Margins (Preference)</p>
+<p>Show damage numbers (Preference) (Legacy is better imo, it doesnt ‘stain’ or stay on your screen)
+Compact Damage numbers (Preference (I have it off, I wanna see big number, not think about if its big number)</p>
+<p>Show health over enemies, (Preference), (ON , turning it off does bring it back to older times)</p>
+<h1 id="video">Video:</h1>
+<h2 id="display">Display</h2>
+<p>Vsync: OFF</p>
+<p>Brightness: 50 -> 32 (stay between 32-50)</p>
+<p>Contrast: 50</p>
+<p>Field of View: 65 -> 90 (Max)</p>
+<h2 id="upscaling">Upscaling:</h2>
+<p>OFF.</p>
+<h2 id="graphics">Graphics:</h2>
+<ul>
+<li>Anti-Aliasing (OFF) (Preference, just don’t use TAA)</li>
+</ul>
+<h2 id="advanced">Advanced:</h2>
+<ul>
+<li>
+<p>Motion Blur (OFF)</p>
+</li>
+<li>
+<p>Depth of Field (OFF)</p>
+</li>
+<li>
+<p>Distoritons (OFF)</p>
+</li>
+<li>
+<p>Glare (OFF)</p>
+</li>
+<li>
+<p>Film Grain (OFF)</p>
+</li>
+<li>
+<p>Bloom: 50 -> 15 / OFF</p>
+</li>
+<li>
+<p>Character Shadows (ON)</p>
+</li>
+<li>
+<p>Reduced Frame Latency (ON) (sound good, I personally haven’t actually noticed an effect)</p>
+</li>
+</ul>
+<h1 id="accessibility">Accessibility</h1>
+<h2 id="keyboardmouse">Keyboard/Mouse:</h2>
+<p>Fire Manual Trigger Weapons Continously: ON</p>
+<h2 id="video-1">Video:</h2>
+<p>Visual Effects Intensity: 100%, dependant Note: Direct input lets you hard-set this to 0.</p>
+<p>Turn off Enable Screen Shake (please)</p>
+<h2 id="character-highlighting">Character Highlighting:</h2>
+<p>Enemy Highlights: (Preference) (ON, 50% - I personally like the visual clarity)</p>
+<p>Reduce Teammates Visual Effects (ON)</p> <div style="margin-top:3rem;"> <a class="ghost-button" href="/posts">Back to posts</a> </div> </article>  </div> </div> <footer class="site-footer footer-static"> <div class="wrap footer-bar"> <div class="footer-text">
+Copyright © Razushi 2025 </div> <a class="footer-link" href="https://github.com/Razushi" target="_blank" rel="noreferrer" aria-label="GitHub"> <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"> <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path> <path d="M9 18c-4.51 2-5-2-7-2"></path> </svg> <span class="sr-only">GitHub</span> </a> </div> </footer> <script type="module">const n=["dark","light","night"],i="epithet-theme",h="epithet-accent",e=document.documentElement,c=document.getElementById("theme-toggle"),a=(()=>{try{return localStorage.getItem(h)}catch{return null}})(),d=a||getComputedStyle(e).getPropertyValue("--accent-highlight").trim()||"#d45658",g=t=>{e.style.setProperty("--accent-highlight",t),e.style.setProperty("--accent-teal",t),e.style.setProperty("--accent-copper",t)},o=t=>{e.dataset.theme=t,e.dataset.themeState=t,g(a||d),c&&(c.setAttribute("data-theme-state",t),c.setAttribute("aria-label",`Change theme (current: ${t})`));try{localStorage.setItem(i,t)}catch{}},m=window.__vestigeTheme?.theme,u=m||"night";o(u);c?.addEventListener("click",()=>{const t=e.dataset.theme||"dark",r=c.getAttribute("data-theme-state")||t,s=n.indexOf(r),l=n[(s+1)%n.length];o(l)});</script></body></html>
