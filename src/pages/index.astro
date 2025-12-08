@@ -16,7 +16,7 @@ const formatYMD = (d: Date) => {
     <div class="grid-overlay" aria-hidden="true"></div>
     <div class="hero">
       <div class="hero-meta">
-        <p class="eyebrow">Incandescent-26 // VESTIGE NODE</p>
+        <p class="eyebrow">Incandescent-21 // VESTIGE NODE</p>
         <div class="status-row">
           <span class="status-badge danger">status: ACTIVE</span>
           <span class="status-badge neutral">signal: UNSTABLE</span>
@@ -28,9 +28,9 @@ const formatYMD = (d: Date) => {
         I've done it. I've survived UTS
       </p>
       <div class="cta-row">
-        <a class="primary-button" href="/blog">Enter archive</a>
-        <a class="ghost-button" href="/about">Meet the Prisoner</a>
-        <a class="ghost-button subtle" href="/tests">Diagnostics</a>
+        <a class="primary-button glitch" href="/blog">Enter archive</a>
+        <a class="ghost-button glitch" href="/about">Meet the Prisoner</a>
+        <a class="ghost-button subtle glitch" href="/tests">Diagnostics</a>
       </div>
       <div class="metrics">
         <div class="metric">
@@ -58,24 +58,24 @@ const formatYMD = (d: Date) => {
           <li>
             <span class="dot"></span>
             <div>
-              <p class="dispatch-title">Field Notes / Blog</p>
-              <p class="dispatch-body">Routes, builds, and troubleshooting logs.</p>
+              <p class="dispatch-title">ACTIVITY LOG</p>
+              <p class="dispatch-body">CONTAINMENT BREACH LOGS. STRUCTURAL UPDATES. PATCH INTEGRITY.</p>
             </div>
             <a class="dispatch-link" href="/blog">Open</a>
           </li>
           <li>
             <span class="dot"></span>
             <div>
-              <p class="dispatch-title">Operator Brief / About</p>
-              <p class="dispatch-body">Who runs this node and why it exists.</p>
+              <p class="dispatch-title">OPERATOR INDEX</p>
+              <p class="dispatch-body">PRIMARY OPERATOR: ORIGIN, ROLE, ACCESS CLASS.</p>
             </div>
             <a class="dispatch-link" href="/about">Open</a>
           </li>
           <li>
             <span class="dot"></span>
             <div>
-              <p class="dispatch-title">Diagnostics / Tests</p>
-              <p class="dispatch-body">Color pipelines and component experiments.</p>
+              <p class="dispatch-title">SYSTEM DIAGNOSTICS</p>
+              <p class="dispatch-body">SUBSTRUCTURE TESTING. SIGNAL DRIFT COMPENSATION.</p>
             </div>
             <a class="dispatch-link" href="/tests">Open</a>
           </li>
@@ -247,6 +247,43 @@ const formatYMD = (d: Date) => {
     box-shadow: 0 8px 20px color-mix(in srgb, var(--accent-highlight) 35%, transparent);
     transition: transform var(--transition), filter var(--transition);
     font-family: var(--font-display);
+  }
+
+  .glitch {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .glitch::before,
+  .glitch::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border: 1px solid color-mix(in srgb, var(--accent-highlight) 30%, #88e6ff);
+    opacity: 0.65;
+    pointer-events: none;
+    transition: transform 120ms ease, opacity 120ms ease;
+  }
+
+  .glitch::before {
+    transform: translate(-5px, -3px);
+    mix-blend-mode: screen;
+  }
+
+  .glitch::after {
+    border-color: color-mix(in srgb, var(--accent-highlight) 25%, #ff6a6a);
+    transform: translate(4px, 2px);
+    mix-blend-mode: screen;
+  }
+
+  .glitch:hover::before {
+    transform: translate(-7px, -4px);
+    opacity: 0.85;
+  }
+
+  .glitch:hover::after {
+    transform: translate(6px, 3px);
+    opacity: 0.85;
   }
 
   .primary-button:hover {
