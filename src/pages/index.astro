@@ -30,7 +30,6 @@ const formatYMD = (d: Date) => {
       <div class="cta-row">
         <a class="primary-button glitch" href="/blog">Enter archive</a>
         <a class="ghost-button glitch" href="/about">Meet the Prisoner</a>
-        <a class="ghost-button subtle glitch" href="/tests">Diagnostics</a>
       </div>
       <div class="metrics">
         <div class="metric">
@@ -71,14 +70,6 @@ const formatYMD = (d: Date) => {
             </div>
             <a class="dispatch-link" href="/about">Open</a>
           </li>
-          <li>
-            <span class="dot"></span>
-            <div>
-              <p class="dispatch-title">SYSTEM DIAGNOSTICS</p>
-              <p class="dispatch-body">SUBSTRUCTURE TESTING. SIGNAL DRIFT COMPENSATION.</p>
-            </div>
-            <a class="dispatch-link" href="/tests">Open</a>
-          </li>
         </ul>
       </section>
 
@@ -100,31 +91,6 @@ const formatYMD = (d: Date) => {
               <p>{post.data.description}</p>
             </a>
           ))}
-        </div>
-      </section>
-
-      <section class="panel">
-        <header class="panel-head">
-          <p class="eyebrow">Loadout</p>
-          <span class="divider"></span>
-        </header>
-        <div class="loadout-grid">
-          <div>
-            <p class="label">Primary</p>
-            <p class="value">NixOS / Neovim / TMUX</p>
-          </div>
-          <div>
-            <p class="label">Stack</p>
-            <p class="value">Astro + Svelte, TypeScript</p>
-          </div>
-          <div>
-            <p class="label">Focus</p>
-            <p class="value">Guides, builds, systems hygiene</p>
-          </div>
-          <div>
-            <p class="label">Theme</p>
-            <p class="value">Dark / Light / Night (cycle)</p>
-          </div>
         </div>
       </section>
     </div>
