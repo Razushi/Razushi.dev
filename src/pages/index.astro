@@ -4,19 +4,13 @@ import { getCollection } from "astro:content";
 
 const posts = await getCollection("blog");
 posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-const recent = posts.slice(0, 3);
-const formatYMD = (d: Date) => {
-  const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
-  return local.toISOString().slice(0, 10);
-};
 ---
 
 <BaseLayout title="Vestige | Expedition Log" stickyFooter={true} pageId="page-home">
   <section class="landing-shell">
-    <div class="grid-overlay" aria-hidden="true"></div>
     <div class="hero">
       <div class="hero-meta">
-        <p class="eyebrow">Incandescent-21 // VESTIGE NODE</p>
+        <p class="eyebrow">Incandescent-21://Vestige</p>
         <div class="status-row">
           <span class="status-badge danger">status: ACTIVE</span>
           <span class="status-badge neutral">signal: UNSTABLE</span>
@@ -37,8 +31,8 @@ const formatYMD = (d: Date) => {
           <p class="value">{posts.length}</p>
         </div>
         <div class="metric">
-          <p class="label">Tags Tracked</p>
-          <p class="value">~</p>
+          <p class="label">J*bs Applied to</p>
+          <p class="value">283</p>
         </div>
         <div class="metric">
           <p class="label">Systems</p>
@@ -50,48 +44,44 @@ const formatYMD = (d: Date) => {
     <div class="panel-grid">
       <section class="panel">
         <header class="panel-head">
-          <p class="eyebrow">Dispatch</p>
+          <p class="eyebrow">Contact</p>
           <span class="divider"></span>
         </header>
-        <ul class="dispatch-list">
+        <ul class="dispatch-list contact-list">
           <li>
-            <span class="dot"></span>
-            <div>
-              <p class="dispatch-title">ACTIVITY LOG</p>
-              <p class="dispatch-body">CONTAINMENT BREACH LOGS. STRUCTURAL UPDATES. PATCH INTEGRITY.</p>
-            </div>
-            <a class="dispatch-link" href="/blog">Open</a>
+            <a class="contact-row" href="mailto:razushi.scve@proton.me">
+              <span class="contact-icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path>
+                  <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                </svg>
+              </span>
+              <span class="contact-text">razushi.scve@proton.me</span>
+            </a>
           </li>
           <li>
-            <span class="dot"></span>
-            <div>
-              <p class="dispatch-title">OPERATOR INDEX</p>
-              <p class="dispatch-body">PRIMARY OPERATOR: ORIGIN, ROLE, ACCESS CLASS.</p>
-            </div>
-            <a class="dispatch-link" href="/about">Open</a>
+            <a class="contact-row" href="https://matrix.to/#/@razushi:matrix.org" target="_blank" rel="noreferrer">
+              <span class="contact-icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 3h3a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-3"></path>
+                  <path d="M8 21H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h3"></path>
+                </svg>
+              </span>
+              <span class="contact-text">@razushi:matrix.org</span>
+            </a>
+          </li>
+          <li>
+            <a class="contact-row" href="https://github.com/Razushi" target="_blank" rel="noreferrer">
+              <span class="contact-icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
+                  <path d="M9 18c-4.51 2-5-2-7-2"></path>
+                </svg>
+              </span>
+              <span class="contact-text">github.com/Razushi</span>
+            </a>
           </li>
         </ul>
-      </section>
-
-      <section class="panel">
-        <header class="panel-head">
-          <p class="eyebrow">Recent Signals</p>
-          <span class="divider"></span>
-        </header>
-        <div class="recent-list">
-          {recent.map((post) => (
-            <a class="recent-card" href={`/blog/${post.slug}/`}>
-              <div class="recent-meta">
-                <span class="pill">{formatYMD(post.data.date)}</span>
-                {(post.data.tags ?? []).slice(0, 2).map((tag) => (
-                  <span class="pill muted">{tag}</span>
-                ))}
-              </div>
-              <h3>{post.data.title}</h3>
-              <p>{post.data.description}</p>
-            </a>
-          ))}
-        </div>
       </section>
     </div>
   </section>
@@ -114,6 +104,7 @@ const formatYMD = (d: Date) => {
     background-size: 36px 36px;
     opacity: 0.35;
     pointer-events: none;
+    mix-blend-mode: lighten;
   }
 
   .hero {
@@ -129,6 +120,16 @@ const formatYMD = (d: Date) => {
     font-family: var(--font-body);
   }
 
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+
+    mix-blend-mode: screen;
+    pointer-events: none;
+    z-index: 0;
+  }
+
   .hero::after {
     content: '';
     position: absolute;
@@ -136,6 +137,12 @@ const formatYMD = (d: Date) => {
     background: radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--accent-highlight) 12%, transparent), transparent 35%);
     opacity: 0.55;
     pointer-events: none;
+    z-index: 0;
+  }
+
+  .hero > * {
+    position: relative;
+    z-index: 1;
   }
 
   .hero-meta {
@@ -242,20 +249,29 @@ const formatYMD = (d: Date) => {
     mix-blend-mode: screen;
   }
 
+  .glitch:hover {
+    filter: brightness(1.03);
+  }
+
   .glitch:hover::before {
-    transform: translate(-7px, -4px);
-    opacity: 0.85;
+    transform: translate(-4px, -2px) skewX(-1deg);
+    opacity: 0.82;
   }
 
   .glitch:hover::after {
-    transform: translate(6px, 3px);
-    opacity: 0.85;
+    transform: translate(4px, 2px) skewX(1deg);
+    opacity: 0.82;
   }
 
   .primary-button:hover {
     transform: translateY(-1px);
     filter: brightness(1.02);
+    box-shadow:
+      0 8px 20px color-mix(in srgb, var(--accent-highlight) 35%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, #66c8ff 70%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--accent-highlight) 60%, transparent);
   }
+
 
   .ghost-button.subtle {
     border-color: var(--border);
@@ -343,20 +359,46 @@ const formatYMD = (d: Date) => {
   .dispatch-list li {
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
-    padding: 0.8rem;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 0.75rem;
+    padding: 0.9rem;
+    display: block;
     background: color-mix(in srgb, var(--bg-alt) 60%, var(--bg));
   }
 
-  .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 999px;
-    background: var(--accent-highlight);
-    box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent-highlight) 25%, transparent);
+  .contact-list {
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .contact-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--transition);
+  }
+
+  .contact-row:hover {
+    color: var(--accent-highlight);
+  }
+
+  .contact-icon {
+    display: inline-flex;
+    width: 22px;
+    height: 22px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .contact-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .contact-text {
+    font-size: 1rem;
+    font-family: var(--font-display);
+    letter-spacing: 0.02em;
   }
 
   .dispatch-title {
@@ -368,72 +410,8 @@ const formatYMD = (d: Date) => {
   .dispatch-body {
     margin: 0;
     color: var(--muted);
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-family: var(--font-body);
-  }
-
-  .dispatch-link {
-    color: var(--accent-highlight);
-    font-weight: 800;
-    text-decoration: none;
-    font-family: var(--font-display);
-  }
-
-  .recent-list {
-    display: grid;
-    gap: 0.65rem;
-  }
-
-  .recent-card {
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: 0.85rem 1rem;
-    text-decoration: none;
-    color: var(--text);
-    background: color-mix(in srgb, var(--bg-alt) 60%, var(--bg));
-    display: grid;
-    gap: 0.35rem;
-    transition: border-color var(--transition), transform var(--transition);
-  }
-
-  .recent-card:hover {
-    border-color: var(--accent-highlight);
-    transform: translateY(-1px);
-  }
-
-  .recent-card h3 {
-    margin: 0;
-    letter-spacing: 0.05em;
-    font-family: var(--font-display);
-  }
-
-  .recent-card p {
-    margin: 0;
-    color: var(--muted);
-    font-family: var(--font-body);
-  }
-
-  .recent-meta {
-    display: flex;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-
-  .pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.18rem 0.55rem;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    font-size: 0.85rem;
-    letter-spacing: 0.04em;
-    font-family: var(--font-display);
-  }
-
-  .pill.muted {
-    color: var(--muted);
   }
 
   .loadout-grid {
