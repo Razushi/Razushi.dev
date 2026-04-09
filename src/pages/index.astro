@@ -1,0 +1,128 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AtSignIcon from '../components/icons/AtSignIcon.astro';
+import GitHubIcon from '../components/icons/GitHubIcon.astro';
+import MailIcon from '../components/icons/MailIcon.astro';
+import { siteConfig } from '../data/site';
+import { formatDate } from '../lib/blog/dates';
+import { getReadingTimeLabel } from '../lib/blog/reading';
+import { getBlogEntries } from '../lib/blog/content';
+import { createBlogRecords } from '../lib/blog/tree';
+
+const latestPosts = createBlogRecords(await getBlogEntries()).slice(0, 3);
+const emailHref = `mailto:${siteConfig.email.replace(' [at] ', '@')}`;
+const matrixHref = `https://matrix.to/#/${siteConfig.matrix}`;
+---
+
+<BaseLayout mainClass="site-main--home">
+  <section id="home-top" class="home-top">
+    <div class="home-intro">
+      <div class="home-intro__content">
+        <div class="home-intro__primary">
+          <h1>EXPEDITION SURVIVED</h1>
+          <p class="home-intro__lede">
+            I did it. I survived UTS.
+          </p>
+        </div>
+
+        <div class="home-intro__secondary">
+          <ul class="home-contact" role="list" aria-label="Contact">
+            <li>
+              <span class="home-contact__icon"><MailIcon /></span>
+              <a class="home-contact__value home-contact__link" href={emailHref}>
+                {siteConfig.email}
+              </a>
+            </li>
+            <li>
+              <span class="home-contact__icon"><GitHubIcon /></span>
+              <a
+                class="home-contact__value home-contact__link"
+                href={siteConfig.github}
+                target="_blank"
+                rel="noreferrer"
+              >
+                razushi
+              </a>
+            </li>
+            <li>
+              <span class="home-contact__icon"><AtSignIcon /></span>
+              <a class="home-contact__value home-contact__link" href={matrixHref}>
+                {siteConfig.matrix}
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div id="recent-writing" class="section-heading home-feed__heading-row home-top__nav">
+      <a class="home-feed__jump home-feed__label" href="#recent-writing">
+        <span class="home-feed__label-icon home-feed__icon--down" aria-hidden="true">↓</span>
+        <span>Recent writing</span>
+      </a>
+      <a class="home-feed__action" href="/blog">
+        <span>All Posts</span>
+        <span class="home-feed__action-icon home-feed__icon--right" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="home-feed home-feed--section">
+    <ul class="post-list" role="list">
+      {latestPosts.map((post) => (
+        <li>
+          <a class="post-list__item" href={`/blog/${post.slugPath}/`}>
+            <div class="post-list__body">
+              <p class="post-list__meta">{[
+                `Published ${formatDate(post.entry.data.pubDate)}`,
+                post.entry.data.updatedDate ? `Updated ${formatDate(post.entry.data.updatedDate)}` : null,
+                getReadingTimeLabel(post.entry.body),
+              ].filter(Boolean).join(' | ')}</p>
+              <h3>{post.displayTitle}</h3>
+              <p>{post.entry.data.summary ?? post.entry.data.description}</p>
+            </div>
+            <span class="post-list__arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <div class="section-heading home-feed__heading-row home-feed__heading-row--footer">
+      <a class="home-feed__jump home-feed__label" href="#home-top">
+        <span class="home-feed__label-icon home-feed__icon--up" aria-hidden="true">↑</span>
+        <span>Back to top</span>
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline>
+  const homeFeedSection = document.querySelector('.home-feed--section');
+
+  if (homeFeedSection instanceof HTMLElement) {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion || !('IntersectionObserver' in window)) {
+      homeFeedSection.classList.add('is-visible');
+    } else {
+      homeFeedSection.classList.add('is-observing');
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry?.isIntersecting) {
+            return;
+          }
+
+          homeFeedSection.classList.add('is-visible');
+          observer.disconnect();
+        },
+        {
+          threshold: 0.2,
+          rootMargin: '0px 0px -8% 0px',
+        }
+      );
+
+      observer.observe(homeFeedSection);
+    }
+  }
+</script>

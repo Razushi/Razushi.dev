@@ -1,0 +1,43 @@
+---
+import { navigationLinks } from '../../data/navigation';
+import { siteConfig } from '../../data/site';
+
+const { currentPath = '/' }: { currentPath?: string } = Astro.props;
+
+const isActive = (href: string) =>
+  href === '/'
+    ? currentPath === href
+    : currentPath === href || currentPath.startsWith(`${href}/`);
+---
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a
+      class:list={[
+        'site-brand',
+        'site-nav__link',
+        isActive('/') && 'site-brand--active',
+        isActive('/') && 'site-nav__link--active',
+      ]}
+      href="/"
+      aria-current={isActive('/') ? 'page' : undefined}
+    >
+      {siteConfig.name}
+    </a>
+
+    <nav class="site-nav" aria-label="Primary">
+      {navigationLinks.map((link) => (
+        <a
+          class:list={[
+            'site-nav__link',
+            isActive(link.href) && 'site-nav__link--active',
+          ]}
+          href={link.href}
+          aria-current={isActive(link.href) ? 'page' : undefined}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>

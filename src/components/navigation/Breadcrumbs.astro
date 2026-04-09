@@ -1,0 +1,39 @@
+---
+import type { Breadcrumb } from '../../lib/blog/tree';
+
+const { items = [] }: { items?: Breadcrumb[] } = Astro.props;
+
+function formatBreadcrumbLabel(label: string) {
+  return label.replace(/\b[\p{L}\p{N}][\p{L}\p{N}''.-]*/gu, (word) => {
+    if (word === word.toUpperCase()) {
+      return word;
+    }
+
+    if (/[A-Z]/.test(word.slice(1))) {
+      return word;
+    }
+
+    return `${word.charAt(0).toUpperCase()}${word.slice(1).toLowerCase()}`;
+  });
+}
+---
+
+{
+  items.length > 0 && (
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <ol>
+        {items.map((item, index) => (
+          <li>
+            {item.href ? (
+              <a href={item.href}>{formatBreadcrumbLabel(item.label)}</a>
+            ) : (
+              <span aria-current="page">{formatBreadcrumbLabel(item.label)}</span>
+            )}
+            {index < items.length - 1 && <span aria-hidden="true">/</span>}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}
+

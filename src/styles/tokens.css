@@ -1,0 +1,166 @@
+:root {
+  --font-ui: 'Reddit Mono', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Lora', 'Geist', 'Noto Sans SC', Georgia, serif;
+  --font-display: 'Geist', system-ui, sans-serif;
+  --font-mono: 'Reddit Mono', monospace;
+  --font-mono-italic: 'Victor Mono', monospace;
+  --font-table: 'Geist', system-ui, sans-serif;
+  --font-cjk: 'Noto Sans SC', 'Maple Mono SC NF', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+
+  --surface-base: #181818;
+  --surface-alt: #131313;
+  --surface-raised: #252525;
+  --surface-highlight: #343434;
+  --surface-sidebar: #363636;
+  --surface-sidebar-highlight: #484848;
+  --surface-inverse: #faf9f6;
+  --surface-light: #fdf9f6;
+
+  --text-primary: #faf9f6;
+  --text-secondary: #d6ccc2;
+  --text-muted: #e9d2b4;
+  --text-inverse: #181818;
+  --text-accent: #e6956d;
+  --text-link: #369ef8;
+
+  --border-subtle: #252525;
+  --border-default: #343434;
+  --border-strong: #484848;
+  --border-accent: #e6956d;
+  --border-inverse: #d6ccc2;
+
+  --accent-primary: #e6956d;
+  --accent-secondary: #708090;
+  --accent-warm: #633b3e;
+  --accent-cool: #93e3e3;
+  --accent-success: #7cc55c;
+  --page-gradient-tint: #e9d2b4;
+  --accent-warning: #f4af66;
+  --accent-danger: #ed5658;
+
+  --semantic-red: #ed5658;
+  --semantic-orange: #f4af66;
+  --semantic-yellow: #efe669;
+  --semantic-lime: #67e64b;
+  --semantic-green: #7cc55c;
+  --semantic-teal: #3ccfb0;
+  --semantic-blue: #369ef8;
+  --semantic-cyan: #93e3e3;
+  --semantic-purple: #b58af7;
+  --semantic-pink: #f28fc8;
+  --semantic-magenta: #b03366;
+  --semantic-brown: #c7876e;
+
+  --code-bg: #181818;
+  --code-border: #505050;
+  --code-text: #abb2bf;
+  --code-comment: #7f848e;
+  --code-keyword: #b58af7;
+  --code-string: #7cc55c;
+  --code-function: #369ef8;
+
+  /* Syntax highlighting — consumed by Shiki via CSS variables */
+  --shiki-bg: var(--code-bg);
+  --shiki-fg: var(--code-text);
+  --shiki-comment: var(--code-comment);
+  --shiki-keyword: var(--semantic-purple);
+  --shiki-operator: var(--semantic-cyan);
+  --shiki-string: var(--semantic-green);
+  --shiki-number: var(--semantic-orange);
+  --shiki-function: var(--semantic-blue);
+  --shiki-type: var(--semantic-yellow);
+  --shiki-property: var(--semantic-red);
+  --shiki-invalid: var(--accent-danger);
+
+  --shadow-none: none;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 20%);
+  --shadow-md: 0 2px 8px rgb(0 0 0 / 28%);
+  --shadow-lg: 0 6px 18px rgb(0 0 0 / 36%);
+  --shadow-focus: 0 0 0 2px rgb(230 149 109 / 35%);
+
+  --radius-none: 0px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+
+  --spacing-0: 0;
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+
+  --motion-duration-fast: 120ms;
+  --motion-duration-normal: 180ms;
+  --motion-duration-slow: 280ms;
+  --motion-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --motion-ease-emphasis: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --motion-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+
+  --text-size-xs: 0.875rem;
+  --text-size-sm: 1rem;
+  --text-size-md: 1.125rem;
+  --text-size-lg: 1.25rem;
+  --text-size-xl: 3rem;
+  --text-size-2xl: 2rem;
+  --text-size-3xl: 1.5rem;
+  --line-height-tight: 1.05;
+  --line-height-body: 1.7;
+  --line-height-loose: 1.85;
+
+  --layout-page-max: 72rem;
+  --layout-prose-max: 68ch;
+  --layout-header-height: calc((var(--spacing-4) * 2) + var(--spacing-6) + 1px);
+  --post-layout-sidebar-width: 20%;
+  --post-layout-content-max: 68ch;
+  --post-layout-column-gap: var(--spacing-4);
+  --post-layout-sticky-offset: calc(var(--layout-header-height) + var(--spacing-6));
+  --post-layout-gutter-top: calc(var(--layout-header-height) + var(--spacing-8));
+  --post-layout-gutter-toc-width: 16rem; /* gutter breakpoint = page-max + this * 2 = 104rem */
+  --post-layout-end-space: min(100svh, 42rem);
+  --home-secondary-nav-height: calc((var(--spacing-6) * 3));
+  --background-stage-top: #131313;
+  --background-stage-mid: #161616;
+  --background-stage-bottom: #181818;
+}
+
+:root {
+  color-scheme: dark;
+  --color-background: var(--surface-base);
+  --color-background-alt: var(--surface-alt);
+  --color-panel: var(--surface-raised);
+  --color-panel-highlight: var(--surface-highlight);
+  --color-sidebar: var(--surface-sidebar);
+  --color-border: var(--border-default);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
+  --color-border-accent: var(--border-accent);
+  --color-text: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-accent: var(--text-accent);
+  --color-link: var(--text-link);
+  --color-accent: var(--accent-primary);
+  --color-success: var(--accent-success);
+  --color-warning: var(--accent-warning);
+  --color-danger: var(--accent-danger);
+  --overlay-header: color-mix(in srgb, var(--surface-base) 88%, transparent);
+  --overlay-raised: color-mix(in srgb, var(--text-primary) 2%, transparent);
+  --overlay-highlight: color-mix(in srgb, var(--text-primary) 3%, transparent);
+  --overlay-selection: color-mix(in srgb, var(--accent-primary) 22%, transparent);
+  --background-film-soft: color-mix(in srgb, var(--surface-inverse) 2%, transparent);
+  --background-film-faint: color-mix(in srgb, var(--surface-inverse) 0.8%, transparent);
+}
+
+:lang(ko),
+:lang(ja),
+:lang(zh) {
+  font-family: var(--font-cjk);
+}

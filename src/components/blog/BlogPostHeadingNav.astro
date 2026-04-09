@@ -1,0 +1,26 @@
+---
+interface PostHeading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+const { headings = [] }: { headings?: PostHeading[] } = Astro.props;
+---
+
+{
+  headings.length > 0 && (
+    <nav class="post-heading-nav" aria-label="On this page" data-post-heading-nav>
+      <p class="post-heading-nav__eyebrow">On this page</p>
+      <ol class="post-heading-nav__list">
+        {headings.map((heading) => (
+          <li class={`post-heading-nav__item post-heading-nav__item--depth-${heading.depth}`}>
+            <a href={`#${heading.slug}`} data-heading-link>
+              <span class="post-heading-nav__label">{heading.text}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}

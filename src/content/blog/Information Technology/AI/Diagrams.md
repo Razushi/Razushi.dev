@@ -1,0 +1,1 @@
+Here's an image, can you break it down into a structured and concise technical description? I want it in markdown format and minimal fluff. Assume I want to redraw the diagram from text.

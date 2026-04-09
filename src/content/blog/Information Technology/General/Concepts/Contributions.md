@@ -1,0 +1,2 @@
+# Easy pickings
+me contributing to a new open source projects: i'm gonna find the single most important function and touch it. (download function) used in the bootstrap chain, people are not very good at invoking curl

@@ -1,0 +1,13 @@
+---
+import { siteConfig } from '../../data/site';
+import Reticle from './Reticle.svelte';
+---
+
+<div class="viewport-mark viewport-mark--reticle" aria-hidden="true">
+  <Reticle />
+</div>
+
+<div class="viewport-mark viewport-mark--watermark" aria-hidden="true">
+  <span>{siteConfig.watermark} &copy; 2026</span>
+  <span></span>
+</div>

@@ -1,0 +1,339 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import BlogPostHeader from '../components/blog/BlogPostHeader.astro';
+import BlogPostHeadingNav from '../components/blog/BlogPostHeadingNav.astro';
+import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
+import { formatDate } from '../lib/blog/dates';
+import { getReadingTimeLabel } from '../lib/blog/reading';
+import type { Breadcrumb, BlogPostRecord } from '../lib/blog/tree';
+
+interface PostHeading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  post: BlogPostRecord;
+  Content: AstroComponentFactory;
+  headings?: PostHeading[];
+  breadcrumbs?: Breadcrumb[];
+}
+
+const {
+  post,
+  Content,
+  headings = [],
+  breadcrumbs = [],
+} = Astro.props as Props;
+
+const metadataItems = [
+  `Published ${formatDate(post.entry.data.pubDate)}`,
+  post.entry.data.updatedDate ? `Updated ${formatDate(post.entry.data.updatedDate)}` : null,
+  getReadingTimeLabel(post.entry.body),
+].filter(Boolean);
+---
+
+<BaseLayout
+  title={post.displayTitle}
+  description={post.entry.data.summary ?? post.entry.data.description ?? ''}
+  breadcrumbs={breadcrumbs}
+  mainClass="site-main--post"
+>
+  <aside slot="main-floating" class="post-gutter-rail">
+    <dl class="post-gutter-meta">
+      <div>
+        <dt>Published</dt>
+        <dd>{formatDate(post.entry.data.pubDate)}</dd>
+      </div>
+      {post.entry.data.updatedDate && (
+        <div>
+          <dt>Updated</dt>
+          <dd>{formatDate(post.entry.data.updatedDate)}</dd>
+        </div>
+      )}
+      <div>
+        <dt>Read Time</dt>
+        <dd>{getReadingTimeLabel(post.entry.body)}</dd>
+      </div>
+    </dl>
+    {headings.length > 0 && <BlogPostHeadingNav headings={headings} />}
+  </aside>
+
+  <article class="post-shell">
+    <div id="post-top">
+      <BlogPostHeader post={post} />
+    </div>
+
+    <div class:list={['post-body', { 'post-body--has-toc': headings.length > 0 }]}>
+      <div class="post-body__rule" aria-hidden="true"></div>
+      <p class="post-body__meta">{metadataItems.join(' | ')}</p>
+
+      {headings.length > 0 && (
+        <aside class="post-body__rail">
+          <BlogPostHeadingNav headings={headings} />
+        </aside>
+      )}
+
+      <div class="post-body__content">
+        <div class="prose-flow">
+          <Content />
+        </div>
+      </div>
+    </div>
+
+    <footer class="post-shell__footer">
+      <a class="home-feed__jump home-feed__label" href="#">
+        <span class="home-feed__label-icon home-feed__icon--up" aria-hidden="true">↑</span>
+        <span>Back to top</span>
+      </a>
+      <a class="home-feed__action" href="/blog">
+        <span>All Posts</span>
+        <span class="home-feed__action-icon home-feed__icon--right" aria-hidden="true">→</span>
+      </a>
+    </footer>
+  </article>
+</BaseLayout>
+
+<script is:inline>
+  const proseFlow = document.querySelector('.post-body__content .prose-flow');
+  const postBodyContent = document.querySelector('.post-body__content');
+  const postFooter = document.querySelector('.post-shell__footer');
+
+  const formatCodeLanguage = (value) => {
+    const normalized = (value || 'text').trim().toLowerCase();
+    const aliases = {
+      plaintext: 'Text',
+      text: 'Text',
+      shell: 'Shell',
+      sh: 'Shell',
+      bash: 'Bash',
+      zsh: 'Zsh',
+      javascript: 'JavaScript',
+      typescript: 'TypeScript',
+      tsx: 'TSX',
+      jsx: 'JSX',
+      markdown: 'Markdown',
+      powershell: 'PowerShell',
+    };
+
+    if (aliases[normalized]) {
+      return aliases[normalized];
+    }
+
+    return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+  };
+
+  const enhanceCodeBlocks = () => {
+    const codeBlocks = Array.from(document.querySelectorAll('.prose-flow pre.astro-code'));
+
+    codeBlocks.forEach((block) => {
+      if (!(block instanceof HTMLElement) || block.parentElement?.classList.contains('code-block')) {
+        return;
+      }
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-block';
+
+      const header = document.createElement('div');
+      header.className = 'code-block__header';
+
+      const language = document.createElement('span');
+      language.className = 'code-block__language';
+      language.textContent = formatCodeLanguage(block.dataset.language);
+
+      const copyButton = document.createElement('button');
+      copyButton.type = 'button';
+      copyButton.className = 'code-block__copy';
+      copyButton.textContent = 'Copy';
+
+      copyButton.addEventListener('click', async () => {
+        const code = block.querySelector('code');
+        const copyValue = code?.textContent ?? block.textContent ?? '';
+
+        try {
+          await navigator.clipboard.writeText(copyValue.trimEnd());
+          copyButton.textContent = 'Copied';
+          copyButton.classList.add('is-copied');
+          window.setTimeout(() => {
+            copyButton.textContent = 'Copy';
+            copyButton.classList.remove('is-copied');
+          }, 1200);
+        } catch {
+          copyButton.textContent = 'Failed';
+          window.setTimeout(() => {
+            copyButton.textContent = 'Copy';
+          }, 1200);
+        }
+      });
+
+      header.append(language, copyButton);
+      wrapper.append(header, block.cloneNode(true));
+      block.replaceWith(wrapper);
+    });
+  };
+
+  enhanceCodeBlocks();
+
+  const updatePostTailFill = () => {
+    if (!(proseFlow instanceof HTMLElement) || !(postBodyContent instanceof HTMLElement) || !(postFooter instanceof HTMLElement)) {
+      return;
+    }
+
+    const headedBlocks = Array.from(
+      proseFlow.querySelectorAll('h1[id], h2[id], h3[id], h4[id]'),
+    ).filter((heading) => heading instanceof HTMLElement);
+
+    const lastHeading = headedBlocks.at(-1);
+    if (!(lastHeading instanceof HTMLElement)) {
+      postBodyContent.style.setProperty('--post-tail-fill', '0px');
+      return;
+    }
+
+    postBodyContent.style.setProperty('--post-tail-fill', '0px');
+
+    const scrollMarginTop = parseFloat(window.getComputedStyle(lastHeading).scrollMarginTop) || 0;
+    const headingTop = lastHeading.getBoundingClientRect().top + window.scrollY;
+    const footerBottom = postFooter.getBoundingClientRect().bottom + window.scrollY;
+    const naturalDistance = footerBottom - headingTop;
+    const viewportDistance = window.innerHeight - scrollMarginTop;
+    const requiredTailFill = Math.max(0, Math.ceil(viewportDistance - naturalDistance));
+
+    postBodyContent.style.setProperty('--post-tail-fill', `${requiredTailFill}px`);
+  };
+
+  updatePostTailFill();
+  window.addEventListener('resize', updatePostTailFill);
+
+  const headingNavs = Array.from(document.querySelectorAll('[data-post-heading-nav]'));
+
+  if (headingNavs.length > 0) {
+    const navLinks = headingNavs.flatMap((nav) => Array.from(nav.querySelectorAll('[data-heading-link]')));
+    const linkGroups = new Map();
+
+    navLinks.forEach((link) => {
+      const href = link.getAttribute('href');
+      if (!href) {
+        return;
+      }
+
+      const linksForHref = linkGroups.get(href) ?? [];
+      linksForHref.push(link);
+      linkGroups.set(href, linksForHref);
+    });
+
+    const observedHeadings = Array.from(linkGroups.keys())
+      .map((hash) => document.querySelector(hash))
+      .filter((heading) => heading instanceof HTMLElement);
+
+    const updateIndicator = () => {
+      headingNavs.forEach((nav) => {
+        const list = nav.querySelector('.post-heading-nav__list');
+        if (!list) return;
+
+        const activeLink = nav.querySelector('[data-heading-link].is-active');
+        if (activeLink) {
+          const listRect = list.getBoundingClientRect();
+          const linkRect = activeLink.getBoundingClientRect();
+          list.style.setProperty('--toc-indicator-top', `${linkRect.top - listRect.top}px`);
+          list.style.setProperty('--toc-indicator-height', `${linkRect.height}px`);
+          list.style.setProperty('--toc-indicator-opacity', '1');
+        } else {
+          list.style.setProperty('--toc-indicator-opacity', '0');
+        }
+      });
+    };
+
+    const setActiveLink = (id) => {
+      linkGroups.forEach((links, href) => {
+        const isActive = href === `#${id}`;
+        links.forEach((link) => link.classList.toggle('is-active', isActive));
+      });
+      updateIndicator();
+    };
+
+    const getStickyThreshold = () => (window.innerWidth >= 960 ? 128 : 112);
+
+    const updateActiveLink = () => {
+      if (observedHeadings.length === 0) {
+        return;
+      }
+
+      const threshold = getStickyThreshold();
+      let activeId = observedHeadings[0].id;
+
+      observedHeadings.forEach((heading) => {
+        if (heading.getBoundingClientRect().top <= threshold) {
+          activeId = heading.id;
+        }
+      });
+
+      const isNearBottom =
+        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+
+      if (isNearBottom) {
+        activeId = observedHeadings.at(-1)?.id ?? activeId;
+      }
+
+      setActiveLink(activeId);
+    };
+
+    let frameId = null;
+    let clickLockId = null;
+    let clickLockTimeout = null;
+
+    const requestUpdate = () => {
+      if (clickLockId !== null) return;
+      if (frameId !== null) return;
+
+      frameId = window.requestAnimationFrame(() => {
+        frameId = null;
+        updateActiveLink();
+      });
+    };
+
+    navLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        const hash = link.getAttribute('href');
+        if (typeof hash === 'string' && hash.startsWith('#')) {
+          clickLockId = hash.slice(1);
+          setActiveLink(hash.slice(1));
+
+          clearTimeout(clickLockTimeout);
+          clickLockTimeout = setTimeout(() => {
+            clickLockId = null;
+          }, 1200);
+        }
+      });
+    });
+
+    // Release click lock immediately on intentional scroll so normal
+    // tracking resumes without waiting for the timeout.
+    window.addEventListener('wheel', () => {
+      if (clickLockId !== null) {
+        clickLockId = null;
+        clearTimeout(clickLockTimeout);
+        requestUpdate();
+      }
+    }, { passive: true });
+
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate);
+    window.addEventListener('hashchange', requestUpdate);
+
+    const initialHash = window.location.hash || linkGroups.keys().next().value;
+    if (typeof initialHash === 'string' && linkGroups.has(initialHash)) {
+      setActiveLink(initialHash.slice(1));
+    }
+
+    requestUpdate();
+
+    // Enable sliding transition after the initial position is painted,
+    // so the indicator doesn't animate in from 0 on page load.
+    requestAnimationFrame(() => {
+      headingNavs.forEach((nav) => {
+        nav.querySelector('.post-heading-nav__list')?.setAttribute('data-toc-ready', '');
+      });
+    });
+  }
+</script>

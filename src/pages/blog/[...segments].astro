@@ -1,0 +1,64 @@
+---
+import BlogFolderLayout from '../../layouts/BlogFolderLayout.astro';
+import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
+import { render } from 'astro:content';
+import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
+import { getBlogEntries } from '../../lib/blog/content';
+import {
+  buildBlogBreadcrumbs,
+  createBlogRecords,
+  findBlogPost,
+  getBlogStaticPaths,
+  getFolderLabel,
+  listBlogDirectory,
+} from '../../lib/blog/tree';
+
+export async function getStaticPaths() {
+  const records = createBlogRecords(await getBlogEntries());
+  return getBlogStaticPaths(records);
+}
+
+const segmentParam = Astro.params.segments;
+const segments =
+  typeof segmentParam === 'string'
+    ? segmentParam.split('/').filter(Boolean)
+    : Array.isArray(segmentParam)
+      ? segmentParam
+      : [];
+
+const records = createBlogRecords(await getBlogEntries());
+const post = findBlogPost(records, segments);
+let Content: AstroComponentFactory | null = null;
+let headings: { depth: number; slug: string; text: string }[] = [];
+
+if (post) {
+  const rendered = await render(post.entry);
+  Content = rendered.Content;
+  headings = rendered.headings.filter(
+    (heading) =>
+      (heading.depth === 1 || heading.depth === 2 || heading.depth === 3) &&
+      heading.slug !== 'appendix',
+  );
+}
+
+const listing = post ? null : listBlogDirectory(records, segments);
+
+if (!post && listing && listing.folders.length === 0 && listing.posts.length === 0) {
+  throw new Error(`Unknown blog path: ${segments.join('/')}`);
+}
+
+const heading = post ? post.displayTitle : getFolderLabel(records, segments);
+const breadcrumbs = buildBlogBreadcrumbs(records, segments, post);
+---
+
+{
+  post && Content ? (
+    <BlogPostLayout post={post} Content={Content} headings={headings} breadcrumbs={breadcrumbs} />
+  ) : (
+    <BlogFolderLayout
+      title={heading}
+      breadcrumbs={breadcrumbs}
+      listing={listing!}
+    />
+  )
+}

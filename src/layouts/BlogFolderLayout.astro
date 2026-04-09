@@ -1,0 +1,26 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import BlogDirectory from '../components/blog/BlogDirectory.astro';
+import type { Breadcrumb, BlogDirectoryListing } from '../lib/blog/tree';
+
+interface Props {
+  title: string;
+  breadcrumbs?: Breadcrumb[];
+  listing: BlogDirectoryListing;
+}
+
+const {
+  title,
+  breadcrumbs = [],
+  listing,
+} = Astro.props as Props;
+---
+
+<BaseLayout title={title} breadcrumbs={breadcrumbs} mainClass="site-main--post">
+  <section class="page-heading">
+    <h1>{title}</h1>
+  </section>
+
+  <div class="blog-listing__rule" aria-hidden="true"></div>
+  <BlogDirectory listing={listing} />
+</BaseLayout>

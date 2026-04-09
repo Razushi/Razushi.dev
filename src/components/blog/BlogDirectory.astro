@@ -1,0 +1,65 @@
+---
+import { formatFullDate, formatRelativeDate } from '../../lib/blog/dates';
+import type { BlogDirectoryListing } from '../../lib/blog/tree';
+
+interface Props {
+  listing: BlogDirectoryListing;
+  emptyMessage?: string;
+}
+
+const {
+  listing,
+  emptyMessage = 'Nothing has been published here yet.',
+} = Astro.props as Props;
+---
+
+{
+  listing.folders.length > 0 || listing.posts.length > 0 ? (
+    <ul class="post-list folder-listing" role="list">
+      {listing.folders.map((folder) => (
+        <li>
+          <a class="post-list__item" href={`/blog/${folder.slug}/`}>
+            <div class="post-list__body">
+              {folder.mostRecentDate && (
+                <time
+                  class="post-list__meta"
+                  datetime={folder.mostRecentDate.toISOString()}
+                  title={formatFullDate(folder.mostRecentDate)}
+                >
+                  {formatRelativeDate(folder.mostRecentDate)}
+                </time>
+              )}
+              <h3>{folder.label}</h3>
+            </div>
+            <span class="post-list__arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      ))}
+
+      {listing.posts.map((post) => (
+        <li>
+          <a class="post-list__item" href={`/blog/${post.slugPath}/`}>
+            <div class="post-list__body">
+              {post.entry.data.pubDate && (
+                <time
+                  class="post-list__meta"
+                  datetime={post.entry.data.pubDate.toISOString()}
+                  title={formatFullDate(post.entry.data.pubDate)}
+                >
+                  {formatRelativeDate(post.entry.data.pubDate)}
+                </time>
+              )}
+              <h3>{post.displayTitle}</h3>
+              {(post.entry.data.summary ?? post.entry.data.description) && (
+                <p>{post.entry.data.summary ?? post.entry.data.description}</p>
+              )}
+            </div>
+            <span class="post-list__arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p class="empty-state">{emptyMessage}</p>
+  )
+}

@@ -1,0 +1,15 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [
+    ".astro/types.d.ts",
+    "src/**/*",
+    "astro.config.mjs",
+    "svelte.config.js"
+  ],
+  "exclude": [
+    "dist",
+    "docs",
+    "Old Website Stuff",
+    "node_modules"
+  ]
+}

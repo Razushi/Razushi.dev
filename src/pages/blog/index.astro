@@ -1,0 +1,1231 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogTreeNode from '../../components/blog/BlogTreeNode.astro';
+import { getBlogEntries } from '../../lib/blog/content';
+import { createBlogRecords, buildBlogTree } from '../../lib/blog/tree';
+import { stripMarkdown } from '../../lib/blog/reading';
+
+const records = createBlogRecords(await getBlogEntries());
+const tree = buildBlogTree(records);
+
+const searchIndex = records.map((record) => ({
+  title: record.displayTitle,
+  summary: record.entry.data.summary ?? record.entry.data.description ?? '',
+  body: record.entry.body ? stripMarkdown(record.entry.body) : '',
+  path: `blog / ${record.slugSegments.join(' / ')}`,
+  slugLeaf: record.slugSegments.at(-1) ?? '',
+  url: `/blog/${record.slugPath}/`,
+  pubDate: record.entry.data.pubDate?.valueOf() ?? 0,
+}));
+---
+
+<BaseLayout
+  title="Blog"
+  description="Browse posts by folder, or search titles, summaries, and post content."
+  breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Blog' }]}
+  mainClass="site-main--post site-main--blog-index"
+>
+  <section class="blog-index-shell">
+    <section class="page-heading">
+      <h1>Blog</h1>
+    </section>
+
+    <div class="blog-listing">
+      <div class="blog-listing__rule" aria-hidden="true"></div>
+
+      <div class="blog-search">
+        <div class="blog-search__field">
+          <span class="blog-search__icon" aria-hidden="true">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="m21 21-4.34-4.34"></path>
+              <circle cx="11" cy="11" r="8"></circle>
+            </svg>
+          </span>
+          <input
+            type="text"
+            id="blog-search-input"
+            class="blog-search__input"
+            placeholder="Search the archive"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <span
+            id="blog-search-mode"
+            class="blog-search__hint"
+            data-default-label="0 results"
+            aria-hidden="true"
+          >
+            0 results
+          </span>
+        </div>
+        <div id="blog-search-results" class="blog-search__results" aria-live="polite"></div>
+      </div>
+
+      <div class="blog-index-nav">
+        <a class="home-feed__action" href="/">
+          <span class="home-feed__action-icon home-feed__icon--left" aria-hidden="true">←</span>
+          <span>Home</span>
+        </a>
+        <div class="blog-index-nav__actions">
+          <a
+            href="#blog-tree"
+            id="blog-expand-all"
+            class="home-feed__action blog-index-nav__control"
+          >
+            <span>Expand all</span>
+            <span class="home-feed__action-icon home-feed__icon--down" aria-hidden="true">↓</span>
+          </a>
+          <span class="blog-index-nav__divider" aria-hidden="true">|</span>
+          <a
+            href="#blog-tree"
+            id="blog-collapse-all"
+            class="home-feed__action blog-index-nav__control"
+          >
+            <span>Collapse all</span>
+            <span class="home-feed__action-icon home-feed__icon--up" aria-hidden="true">↑</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="blog-tree" id="blog-tree">
+        <BlogTreeNode nodes={tree} />
+      </div>
+    </div>
+
+    <footer class="post-shell__footer blog-index-shell__footer">
+      <a class="home-feed__jump home-feed__label" href="#">
+        <span class="home-feed__label-icon home-feed__icon--up" aria-hidden="true">↑</span>
+        <span>Back to top</span>
+      </a>
+    </footer>
+  </section>
+</BaseLayout>
+
+<script is:inline define:vars={{ searchIndex }}>
+  // ── helpers ──────────────────────────────────────────────────────────────
+
+  function normalizeWhitespace(text) {
+    return text.replace(/\s+/g, ' ').trim();
+  }
+
+  function escapeHtml(text) {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function isWordCharacter(character) {
+    return Boolean(character) && /[\p{L}\p{N}]/u.test(character);
+  }
+
+  function isWholeWordMatch(text, index, length) {
+    const before = text[index - 1] ?? '';
+    const after = text[index + length] ?? '';
+    return !isWordCharacter(before) && !isWordCharacter(after);
+  }
+
+  function escapeRegExp(text) {
+    return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function findAllOccurrences(text, query, { wholeWord = false } = {}) {
+    if (!text || !query) return [];
+
+    const matches = [];
+    const matcher = new RegExp(escapeRegExp(query), 'giu');
+
+    for (const match of text.matchAll(matcher)) {
+      const matchedText = match[0];
+      const index = match.index ?? -1;
+      if (index === -1 || matchedText.length === 0) continue;
+
+      if (!wholeWord || isWholeWordMatch(text, index, matchedText.length)) {
+        matches.push({ index, length: matchedText.length });
+      }
+    }
+
+    return matches;
+  }
+
+  function createTerms(query) {
+    return Array.from(
+      new Set(
+        query
+          .toLowerCase()
+          .split(/\s+/)
+          .map((term) => term.trim())
+          .filter(Boolean),
+      ),
+    );
+  }
+
+  function analyzeField(text, query, terms) {
+    const normalizedText = normalizeWhitespace(text);
+    if (!normalizedText) {
+      return {
+        text: '',
+        matchedTerms: new Set(),
+        phraseMatches: [],
+        exactTermMatches: [],
+        score: 0,
+      };
+    }
+
+    const wholePhraseMatches = findAllOccurrences(normalizedText, query, { wholeWord: true });
+    const exactTermMatches = [];
+    const matchedTerms = new Set();
+
+    for (const term of terms) {
+      const wholeMatches = findAllOccurrences(normalizedText, term, { wholeWord: true });
+      if (wholeMatches.length > 0) {
+        exactTermMatches.push(...wholeMatches);
+        matchedTerms.add(term);
+      }
+    }
+
+    let score = 0;
+    if (wholePhraseMatches.length > 0) {
+      score = 6;
+    } else if (terms.length > 1 && exactTermMatches.length > 0 && matchedTerms.size === terms.length) {
+      score = 4;
+    } else if (exactTermMatches.length > 0) {
+      score = 3;
+    }
+
+    return {
+      text: normalizedText,
+      matchedTerms,
+      phraseMatches: wholePhraseMatches,
+      exactTermMatches,
+      score,
+    };
+  }
+
+  function getWordRanges(text) {
+    return Array.from(text.matchAll(/[\p{L}\p{N}]+/gu), (match) => ({
+      word: match[0],
+      index: match.index ?? 0,
+      length: match[0].length,
+    }));
+  }
+
+  function getTypoThreshold(term) {
+    if (term.length >= 9) return 3;
+    if (term.length >= 6) return 2;
+    if (term.length >= 4) return 1;
+    return 0;
+  }
+
+  function damerauLevenshtein(a, b, maxDistance) {
+    if (Math.abs(a.length - b.length) > maxDistance) {
+      return null;
+    }
+
+    const rows = a.length + 1;
+    const cols = b.length + 1;
+    const matrix = Array.from({ length: rows }, () => Array(cols).fill(0));
+
+    for (let row = 0; row < rows; row += 1) matrix[row][0] = row;
+    for (let col = 0; col < cols; col += 1) matrix[0][col] = col;
+
+    for (let row = 1; row < rows; row += 1) {
+      let rowMin = Number.POSITIVE_INFINITY;
+
+      for (let col = 1; col < cols; col += 1) {
+        const substitutionCost = a[row - 1] === b[col - 1] ? 0 : 1;
+        let value = Math.min(
+          matrix[row - 1][col] + 1,
+          matrix[row][col - 1] + 1,
+          matrix[row - 1][col - 1] + substitutionCost,
+        );
+
+        if (
+          row > 1 &&
+          col > 1 &&
+          a[row - 1] === b[col - 2] &&
+          a[row - 2] === b[col - 1]
+        ) {
+          value = Math.min(value, matrix[row - 2][col - 2] + 1);
+        }
+
+        matrix[row][col] = value;
+        rowMin = Math.min(rowMin, value);
+      }
+
+      if (rowMin > maxDistance) {
+        return null;
+      }
+    }
+
+    const distance = matrix[a.length][b.length];
+    return distance <= maxDistance ? distance : null;
+  }
+
+  function analyzeApproximateField(text, terms) {
+    const normalizedText = normalizeWhitespace(text);
+    if (!normalizedText) {
+      return {
+        text: '',
+        matchedTerms: new Set(),
+        ranges: [],
+        approximateCount: 0,
+        score: 0,
+      };
+    }
+
+    const words = getWordRanges(normalizedText);
+    const matchedTerms = new Set();
+    const ranges = [];
+    let approximateCount = 0;
+
+    for (const term of terms) {
+      const exactMatches = findAllOccurrences(normalizedText, term, { wholeWord: true });
+      if (exactMatches.length > 0) {
+        matchedTerms.add(term);
+        ranges.push(...exactMatches);
+        continue;
+      }
+
+      const threshold = getTypoThreshold(term);
+      if (threshold === 0) continue;
+
+      let bestMatch = null;
+
+      for (const word of words) {
+        if (Math.abs(word.word.length - term.length) > threshold) continue;
+
+        const distance = damerauLevenshtein(term, word.word.toLowerCase(), threshold);
+        if (distance === null) continue;
+
+        if (!bestMatch || distance < bestMatch.distance) {
+          bestMatch = { ...word, distance };
+        }
+      }
+
+      if (bestMatch) {
+        matchedTerms.add(term);
+        ranges.push({ index: bestMatch.index, length: bestMatch.length });
+        approximateCount += 1;
+      }
+    }
+
+    let score = 0;
+    if (matchedTerms.size === terms.length && terms.length > 0) {
+      score = approximateCount > 0 ? 2 : 3;
+    } else if (matchedTerms.size > 0) {
+      score = 1;
+    }
+
+    return {
+      text: normalizedText,
+      matchedTerms,
+      ranges: dedupeRanges(ranges),
+      approximateCount,
+      score,
+    };
+  }
+
+  function createCompactSearchText(text) {
+    const compact = [];
+    const map = [];
+
+    for (let index = 0; index < text.length; index += 1) {
+      if (isWordCharacter(text[index])) {
+        compact.push(text[index].toLowerCase());
+        map.push(index);
+      }
+    }
+
+    return {
+      text: compact.join(''),
+      map,
+    };
+  }
+
+  function createRangesFromIndices(indices) {
+    if (indices.length === 0) return [];
+
+    const ordered = [...new Set(indices)].sort((left, right) => left - right);
+    const ranges = [];
+    let start = ordered[0];
+    let end = ordered[0];
+
+    for (let index = 1; index < ordered.length; index += 1) {
+      const current = ordered[index];
+      if (current === end + 1) {
+        end = current;
+        continue;
+      }
+
+      ranges.push({ index: start, length: end - start + 1 });
+      start = current;
+      end = current;
+    }
+
+    ranges.push({ index: start, length: end - start + 1 });
+    return ranges;
+  }
+
+  function subsequenceMatch(text, query) {
+    if (!text || !query) return null;
+
+    let queryIndex = 0;
+    let score = 0;
+    let consecutive = 0;
+    const matchedIndices = [];
+
+    for (let index = 0; index < text.length && queryIndex < query.length; index += 1) {
+      if (text[index] !== query[queryIndex]) {
+        consecutive = 0;
+        continue;
+      }
+
+      matchedIndices.push(index);
+
+      let bonus = 1 + consecutive * 1.75;
+      if (index === 0 || !isWordCharacter(text[index - 1])) {
+        bonus += 1.5;
+      }
+
+      score += bonus;
+      consecutive += 1;
+      queryIndex += 1;
+    }
+
+    if (queryIndex !== query.length) {
+      return null;
+    }
+
+    const spread = matchedIndices.at(-1) - matchedIndices[0] + 1;
+    score -= Math.max(0, spread - query.length) * 0.18;
+
+    return {
+      score,
+      matchedIndices,
+    };
+  }
+
+  function analyzeFuzzyField(text, query) {
+    const normalizedText = normalizeWhitespace(text);
+    if (!normalizedText) {
+      return {
+        text: '',
+        ranges: [],
+        score: 0,
+      };
+    }
+
+    const lowerText = normalizedText.toLowerCase();
+    const lowerQuery = query.toLowerCase();
+    const compactText = createCompactSearchText(normalizedText);
+    const compactQuery = createCompactSearchText(query).text;
+
+    const directMatch = subsequenceMatch(lowerText, lowerQuery);
+    const compactMatch = compactQuery
+      ? subsequenceMatch(compactText.text, compactQuery)
+      : null;
+    const compactRanges = compactMatch
+      ? createRangesFromIndices(compactMatch.matchedIndices.map((index) => compactText.map[index]))
+      : [];
+    const directRanges = directMatch
+      ? createRangesFromIndices(directMatch.matchedIndices)
+      : [];
+
+    let best = null;
+
+    if (directMatch) {
+      best = {
+        score: directMatch.score,
+        ranges: directRanges,
+      };
+    }
+
+    if (compactMatch) {
+      const compactScore = compactMatch.score * 0.96;
+      if (!best || compactScore > best.score) {
+        best = {
+          score: compactScore,
+          ranges: compactRanges,
+        };
+      }
+    }
+
+    if (!best) {
+      return {
+        text: normalizedText,
+        ranges: [],
+        score: 0,
+      };
+    }
+
+    return {
+      text: normalizedText,
+      ranges: best.ranges,
+      score: best.score,
+    };
+  }
+
+  function dedupeRanges(ranges) {
+    const seen = new Set();
+    return ranges.filter((range) => {
+      const key = `${range.index}:${range.length}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
+  function getRangesForRendering(analysis) {
+    if (analysis.phraseMatches.length > 0) {
+      return analysis.phraseMatches;
+    }
+
+    return dedupeRanges([...analysis.exactTermMatches]).sort(
+      (left, right) => left.index - right.index,
+    );
+  }
+
+  function renderHighlightedText(text, ranges) {
+    if (ranges.length === 0) return escapeHtml(text);
+
+    const orderedRanges = ranges
+      .filter((range) => range.index < text.length)
+      .map((range) => ({
+        index: Math.max(0, range.index),
+        length: Math.max(0, Math.min(range.length, text.length - range.index)),
+      }))
+      .sort((left, right) => left.index - right.index);
+
+    let html = '';
+    let cursor = 0;
+
+    for (const range of orderedRanges) {
+      if (range.index < cursor || range.length === 0) continue;
+      html += escapeHtml(text.slice(cursor, range.index));
+      html += `<mark>${escapeHtml(text.slice(range.index, range.index + range.length))}</mark>`;
+      cursor = range.index + range.length;
+    }
+
+    html += escapeHtml(text.slice(cursor));
+    return html;
+  }
+
+  function getWordPositions(text) {
+    const positions = [];
+    for (const match of text.matchAll(/\S+/g)) {
+      positions.push({ start: match.index, end: match.index + match[0].length });
+    }
+    return positions;
+  }
+
+  function firstNWords(text, n) {
+    if (!text) return '';
+    const words = getWordPositions(text);
+    if (words.length === 0) return '';
+    const lastWord = words[Math.min(n - 1, words.length - 1)];
+    return escapeHtml(text.slice(0, lastWord.end)) + (words.length > n ? '…' : '');
+  }
+
+  function buildWordBasedSnippet(text, ranges, wordsBefore, wordsAfter) {
+    if (!text) return '';
+    const words = getWordPositions(text);
+    if (words.length === 0) return '';
+
+    const orderedRanges = dedupeRanges([...ranges]).sort((a, b) => a.index - b.index);
+    const anchor = orderedRanges[0];
+
+    if (!anchor) {
+      return firstNWords(text, wordsBefore + wordsAfter);
+    }
+
+    let anchorWordIndex = 0;
+    for (let i = 0; i < words.length; i++) {
+      if (words[i].start <= anchor.index) anchorWordIndex = i;
+      else break;
+    }
+
+    const anchorEnd = anchor.index + anchor.length;
+    let anchorEndWordIndex = anchorWordIndex;
+    while (anchorEndWordIndex + 1 < words.length && words[anchorEndWordIndex + 1].start < anchorEnd) {
+      anchorEndWordIndex++;
+    }
+
+    const startWordIndex = Math.max(0, anchorWordIndex - wordsBefore);
+    const endWordIndex = Math.min(words.length - 1, anchorEndWordIndex + wordsAfter);
+
+    const start = words[startWordIndex].start;
+    const end = words[endWordIndex].end;
+
+    const prefix = startWordIndex > 0 ? '…' : '';
+    const suffix = endWordIndex < words.length - 1 ? '…' : '';
+
+    const windowText = text.slice(start, end);
+    const windowRanges = orderedRanges
+      .filter((r) => r.index + r.length > start && r.index < end)
+      .map((r) => ({
+        index: Math.max(0, r.index - start),
+        length: Math.min(r.length, end - Math.max(r.index, start)),
+      }));
+
+    return `${prefix}${renderHighlightedText(windowText, windowRanges)}${suffix}`;
+  }
+
+  function buildLiteralResult(item, query, terms) {
+    const title = analyzeField(item.title, query, terms);
+    const summary = analyzeField(item.summary, query, terms);
+    const path = analyzeField(item.path, query, terms);
+    const body = analyzeField(item.body, query, terms);
+    const fields = [
+      { name: 'body', weight: 140, analysis: body },
+      { name: 'title', weight: 120, analysis: title },
+      { name: 'summary', weight: 115, analysis: summary },
+      { name: 'path', weight: 110, analysis: path },
+    ];
+
+    const matchingFields = fields.filter((field) => field.analysis.score > 0);
+    if (matchingFields.length === 0) return null;
+
+    const bestField = [...matchingFields].sort(
+      (left, right) => (right.analysis.score + right.weight) - (left.analysis.score + left.weight),
+    )[0];
+    const exactFieldCount = matchingFields.filter((field) => field.analysis.score >= 3).length;
+    const score =
+      bestField.analysis.score * 100 +
+      bestField.weight +
+      exactFieldCount * 12 +
+      matchingFields.length * 4 +
+      Math.min(terms.length, bestField.analysis.matchedTerms.size) * 3 +
+      (item.pubDate / 1_000_000_000_000);
+
+    const summaryRanges = getRangesForRendering(summary);
+    const summarySnippet = summary.score > 0
+      ? buildWordBasedSnippet(summary.text, summaryRanges, 6, 6)
+      : firstNWords(item.summary, 13);
+
+    const bodyRanges = getRangesForRendering(body);
+    const contentSnippet = body.score > 0
+      ? buildWordBasedSnippet(body.text, bodyRanges, 12, 13)
+      : firstNWords(item.summary, 26);
+
+    return {
+      ...item,
+      score,
+      titleRanges: getRangesForRendering(title),
+      summarySnippet,
+      contentSnippet,
+    };
+  }
+
+  function buildApproximateResult(item, terms) {
+    const title = analyzeApproximateField(item.title, terms);
+    const summary = analyzeApproximateField(item.summary, terms);
+    const path = analyzeApproximateField(item.path, terms);
+    const body = analyzeApproximateField(item.body, terms);
+    const fields = [
+      { name: 'body', weight: 140, analysis: body },
+      { name: 'title', weight: 120, analysis: title },
+      { name: 'summary', weight: 115, analysis: summary },
+      { name: 'path', weight: 110, analysis: path },
+    ];
+    const matchingFields = fields.filter((field) => field.analysis.score > 0);
+    const matchedTerms = new Set(
+      matchingFields.flatMap((field) => Array.from(field.analysis.matchedTerms)),
+    );
+
+    if (matchingFields.length === 0 || matchedTerms.size !== terms.length) {
+      return null;
+    }
+
+    const bestField = [...matchingFields].sort(
+      (left, right) => (right.analysis.score + right.weight) - (left.analysis.score + left.weight),
+    )[0];
+    const approximateCount = fields.reduce(
+      (count, field) => count + field.analysis.approximateCount,
+      0,
+    );
+    const score =
+      bestField.analysis.score * 100 +
+      bestField.weight +
+      matchingFields.length * 4 -
+      approximateCount * 8 +
+      (item.pubDate / 1_000_000_000_000);
+
+    const summarySnippet = summary.score > 0
+      ? buildWordBasedSnippet(summary.text, summary.ranges, 6, 6)
+      : firstNWords(item.summary, 13);
+
+    const contentSnippet = body.score > 0
+      ? buildWordBasedSnippet(body.text, body.ranges, 12, 13)
+      : firstNWords(item.summary, 26);
+
+    return {
+      ...item,
+      score,
+      isApproximate: true,
+      titleRanges: title.ranges,
+      summarySnippet,
+      contentSnippet,
+    };
+  }
+
+  function shouldUseFuzzyFallback(query, terms) {
+    const compactQuery = createCompactSearchText(query).text;
+    return compactQuery.length >= 4 || terms.some((term) => term.length >= 3);
+  }
+
+  function buildFuzzyResult(item, query) {
+    const title = analyzeFuzzyField(item.title, query);
+    const summary = analyzeFuzzyField(item.summary, query);
+    const path = analyzeFuzzyField(item.path, query);
+    const body = analyzeFuzzyField(item.body, query);
+    const fields = [
+      { name: 'body', weight: 55, analysis: body },
+      { name: 'title', weight: 110, analysis: title },
+      { name: 'summary', weight: 105, analysis: summary },
+      { name: 'path', weight: 100, analysis: path },
+    ];
+    const matchingFields = fields.filter((field) => field.analysis.score > 0);
+
+    if (matchingFields.length === 0) {
+      return null;
+    }
+
+    const bestField = [...matchingFields].sort(
+      (left, right) => (right.analysis.score + right.weight) - (left.analysis.score + left.weight),
+    )[0];
+    const score =
+      bestField.analysis.score * 25 +
+      bestField.weight +
+      matchingFields.length * 4 +
+      (item.pubDate / 1_000_000_000_000);
+
+    const summarySnippet = summary.score > 0
+      ? buildWordBasedSnippet(summary.text, summary.ranges, 6, 6)
+      : firstNWords(item.summary, 13);
+
+    const contentSnippet = body.score > 0
+      ? buildWordBasedSnippet(body.text, body.ranges, 12, 13)
+      : firstNWords(item.summary, 26);
+
+    return {
+      ...item,
+      score,
+      isFuzzy: true,
+      titleRanges: title.ranges,
+      summarySnippet,
+      contentSnippet,
+    };
+  }
+
+  function renderSearchResults(items, modifierClass = '') {
+    return items.map((item) => {
+      const titleHtml =
+        '<div class="blog-search__result-title">' +
+        renderHighlightedText(item.title, item.titleRanges ?? []) +
+        '</div>';
+
+      const summaryHtml = item.summarySnippet
+        ? '<div class="blog-search__result-summary">' + item.summarySnippet + '</div>'
+        : '';
+
+      const contentHtml = item.contentSnippet
+        ? '<div class="blog-search__result-snippet">' + item.contentSnippet + '</div>'
+        : '';
+
+      return (
+        '<a href="' + item.url + '" class="blog-search__result' + modifierClass + '" data-blog-search-result="true">' +
+        titleHtml +
+        summaryHtml +
+        contentHtml +
+        '</a>'
+      );
+    }).join('');
+  }
+
+  // ── search ───────────────────────────────────────────────────────────────
+
+  const treeStateCookieName = 'blog_tree_open_folders';
+  const lastOpenedTreePathStorageKey = 'blog_last_opened_path';
+
+  const input   = document.getElementById('blog-search-input');
+  const results = document.getElementById('blog-search-results');
+  const mode    = document.getElementById('blog-search-mode');
+  const expandAllButton = document.getElementById('blog-expand-all');
+  const collapseAllButton = document.getElementById('blog-collapse-all');
+
+  function setSearchMode(label) {
+    if (!mode) return;
+    mode.textContent = label || mode.dataset.defaultLabel || '0 results';
+  }
+
+  function getResultsLabel(count) {
+    return `${count} result${count === 1 ? '' : 's'}`;
+  }
+
+  function getFolderTrailFromBlogUrl(url) {
+    try {
+      const { pathname } = new URL(url, window.location.origin);
+      const segments = pathname.split('/').filter(Boolean);
+
+      if (segments[0] !== 'blog' || segments.length < 2) {
+        return [];
+      }
+
+      const folderSegments = segments.slice(1, -1);
+      return folderSegments.map((_, index) => folderSegments.slice(0, index + 1).join('/'));
+    } catch {
+      return [];
+    }
+  }
+
+  function getBlogSelectionFromUrl(url) {
+    try {
+      const { pathname } = new URL(url, window.location.origin);
+      const segments = pathname.split('/').filter(Boolean);
+
+      if (segments[0] !== 'blog' || segments.length < 2) {
+        return null;
+      }
+
+      return {
+        postUrl: pathname.endsWith('/') ? pathname : `${pathname}/`,
+        folderTrail: getFolderTrailFromBlogUrl(pathname),
+        timestamp: Date.now(),
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  function readLastOpenedTreePath() {
+    try {
+      const rawValue = window.sessionStorage.getItem(lastOpenedTreePathStorageKey);
+      if (!rawValue) return null;
+
+      const parsedValue = JSON.parse(rawValue);
+      if (
+        !parsedValue ||
+        typeof parsedValue.postUrl !== 'string' ||
+        !Array.isArray(parsedValue.folderTrail)
+      ) {
+        return null;
+      }
+
+      return {
+        postUrl: parsedValue.postUrl,
+        folderTrail: parsedValue.folderTrail.filter((value) => typeof value === 'string' && value.length > 0),
+        timestamp: typeof parsedValue.timestamp === 'number' ? parsedValue.timestamp : 0,
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  function writeLastOpenedTreePath(value) {
+    try {
+      window.sessionStorage.setItem(lastOpenedTreePathStorageKey, JSON.stringify(value));
+    } catch {
+      // Ignore storage failures and preserve navigation.
+    }
+  }
+
+  function persistLastOpenedBlogPath(url) {
+    const selection = getBlogSelectionFromUrl(url);
+    if (!selection) return;
+
+    mergePersistedOpenFolders(selection.folderTrail);
+    writeLastOpenedTreePath(selection);
+  }
+
+  if (input && results) {
+    input.addEventListener('input', () => {
+      const q = normalizeWhitespace(input.value);
+      if (!q) {
+        results.classList.remove('is-visible');
+        results.innerHTML = '';
+        setSearchMode('');
+        return;
+      }
+
+      const terms = createTerms(q);
+      const literalResults = searchIndex
+        .map((item) => buildLiteralResult(item, q, terms))
+        .filter(Boolean)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 8);
+      const approximateResults = literalResults.length === 0
+        ? searchIndex
+            .map((item) => buildApproximateResult(item, terms))
+            .filter(Boolean)
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 8)
+        : [];
+      const fuzzyResults = literalResults.length === 0 && approximateResults.length === 0 && shouldUseFuzzyFallback(q, terms)
+        ? searchIndex
+            .map((item) => buildFuzzyResult(item, q))
+            .filter(Boolean)
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 8)
+        : [];
+
+      if (literalResults.length === 0) {
+        if (approximateResults.length > 0) {
+          setSearchMode(getResultsLabel(approximateResults.length));
+          results.innerHTML = renderSearchResults(approximateResults, ' blog-search__result--approximate');
+        } else if (fuzzyResults.length > 0) {
+          setSearchMode(getResultsLabel(fuzzyResults.length));
+          results.innerHTML = renderSearchResults(fuzzyResults, ' blog-search__result--fuzzy');
+        } else {
+          setSearchMode(getResultsLabel(0));
+          results.innerHTML = '<div class="blog-search__no-results">no exact, close, or fuzzy matches found</div>';
+        }
+      } else {
+        setSearchMode(getResultsLabel(literalResults.length));
+        results.innerHTML = renderSearchResults(literalResults);
+      }
+
+      results.classList.add('is-visible');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!input.contains(e.target) && !results.contains(e.target)) {
+        results.classList.remove('is-visible');
+      }
+    });
+
+    results.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+
+      const link = target.closest('[data-blog-search-result]');
+      if (!(link instanceof HTMLAnchorElement)) return;
+
+      persistLastOpenedBlogPath(link.href);
+    });
+  }
+
+  const treeFolders = Array.from(document.querySelectorAll('.tree-folder'))
+    .filter((folder) => folder instanceof HTMLDetailsElement);
+  const treePosts = Array.from(document.querySelectorAll('.tree-post'))
+    .filter((link) => link instanceof HTMLAnchorElement);
+  const treeMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const treeBatchStagger = 12;
+  const treeBatchDelayCap = 72;
+  const treeFolderAnimationState = new WeakMap();
+  let treePersistenceSuspendCount = 0;
+  let treeAnimationSequence = 0;
+  let treeBatchRequestId = 0;
+
+  function readCookie(name) {
+    const cookieEntry = document.cookie
+      .split('; ')
+      .find((entry) => entry.startsWith(`${name}=`));
+
+    if (!cookieEntry) return null;
+    return decodeURIComponent(cookieEntry.slice(name.length + 1));
+  }
+
+  function writeCookie(name, value) {
+    document.cookie =
+      `${name}=${encodeURIComponent(value)}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
+  }
+
+  function setPersistedOpenFolders(openFolders) {
+    writeCookie(treeStateCookieName, JSON.stringify(Array.from(openFolders)));
+  }
+
+  function getPersistedOpenFolders() {
+    try {
+      const rawValue = readCookie(treeStateCookieName);
+      const parsedValue = rawValue ? JSON.parse(rawValue) : [];
+      return Array.isArray(parsedValue) ? new Set(parsedValue.filter(Boolean)) : new Set();
+    } catch {
+      return new Set();
+    }
+  }
+
+  function mergePersistedOpenFolders(folderSlugs) {
+    if (folderSlugs.length === 0) return;
+
+    const openFolders = getPersistedOpenFolders();
+    folderSlugs.forEach((folderSlug) => openFolders.add(folderSlug));
+    setPersistedOpenFolders(openFolders);
+  }
+
+  function saveOpenFolders() {
+    const openFolders = treeFolders
+      .filter((folder) => folder.open)
+      .map((folder) => folder.dataset.treeFolderSlug)
+      .filter(Boolean);
+
+    setPersistedOpenFolders(new Set(openFolders));
+  }
+
+  function applyPersistedOpenFolders() {
+    const persistedOpenFolders = getPersistedOpenFolders();
+
+    treePersistenceSuspendCount += 1;
+
+    try {
+      treeFolders.forEach((folder) => {
+        const folderSlug = folder.dataset.treeFolderSlug;
+        folder.open = Boolean(folderSlug && persistedOpenFolders.has(folderSlug));
+      });
+    } finally {
+      treePersistenceSuspendCount = Math.max(0, treePersistenceSuspendCount - 1);
+    }
+  }
+
+  function clearLastOpenedTreeHighlight() {
+    treeFolders.forEach((folder) => folder.classList.remove('is-last-opened-ancestor'));
+    treePosts.forEach((post) => post.classList.remove('is-last-opened'));
+  }
+
+  function applyLastOpenedTreeHighlight() {
+    clearLastOpenedTreeHighlight();
+
+    const lastOpenedTreePath = readLastOpenedTreePath();
+    if (!lastOpenedTreePath) return;
+
+    const folderTrail = new Set(lastOpenedTreePath.folderTrail);
+    treeFolders.forEach((folder) => {
+      const folderSlug = folder.dataset.treeFolderSlug;
+      if (folderSlug && folderTrail.has(folderSlug)) {
+        folder.classList.add('is-last-opened-ancestor');
+      }
+    });
+
+    treePosts.forEach((post) => {
+      const postPath = new URL(post.href, window.location.origin).pathname;
+      if (postPath === lastOpenedTreePath.postUrl) {
+        post.classList.add('is-last-opened');
+      }
+    });
+  }
+
+  function getTreeChildren(folder) {
+    const children = folder.querySelector(':scope > .tree-children');
+    return children instanceof HTMLElement ? children : null;
+  }
+
+  function getTreeSummary(folder) {
+    const summary = folder.querySelector(':scope > summary');
+    return summary instanceof HTMLElement ? summary : null;
+  }
+
+  function waitForAnimationFrame(frameCount = 1) {
+    return new Promise((resolve) => {
+      const step = (remainingFrames) => {
+        if (remainingFrames <= 0) {
+          resolve();
+          return;
+        }
+
+        window.requestAnimationFrame(() => step(remainingFrames - 1));
+      };
+
+      step(frameCount);
+    });
+  }
+
+  function waitForHeightTransition(folder, element, duration) {
+    return new Promise((resolve) => {
+      let settled = false;
+
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        window.clearTimeout(timeoutId);
+        element.removeEventListener('transitionend', handleTransitionEnd);
+        treeFolderAnimationState.delete(folder);
+        resolve();
+      };
+
+      const handleTransitionEnd = (event) => {
+        if (event.target === element && event.propertyName === 'height') {
+          finish();
+        }
+      };
+
+      const timeoutId = window.setTimeout(finish, duration + 120);
+      element.addEventListener('transitionend', handleTransitionEnd);
+      treeFolderAnimationState.set(folder, {
+        element,
+        timeoutId,
+        handleTransitionEnd,
+        finish,
+      });
+    });
+  }
+
+  function stopTreeFolderAnimation(folder) {
+    const children = getTreeChildren(folder);
+    const currentAnimation = treeFolderAnimationState.get(folder);
+
+    if (!children || !currentAnimation) {
+      return;
+    }
+
+    currentAnimation.finish();
+
+    const currentHeight = children.getBoundingClientRect().height;
+    const currentOpacity = window.getComputedStyle(children).opacity;
+
+    children.style.transition = '';
+    children.style.height = `${currentHeight}px`;
+    children.style.opacity = currentOpacity;
+    children.style.overflow = 'hidden';
+    children.style.willChange = 'height, opacity';
+    folder.classList.remove('is-animating');
+  }
+
+  async function animateTreeFolder(folder, shouldOpen, delay = 0, requestId = null) {
+    const children = getTreeChildren(folder);
+
+    if (!children || folder.open === shouldOpen || treeMotionQuery.matches) {
+      folder.open = shouldOpen;
+      return;
+    }
+
+    if (delay > 0) {
+      await new Promise((resolve) => window.setTimeout(resolve, delay));
+    }
+
+    if (requestId !== null && requestId !== treeBatchRequestId) {
+      return;
+    }
+
+    const currentHeight = children.getBoundingClientRect().height;
+    const currentOpacity = window.getComputedStyle(children).opacity;
+    const duration = 125;
+    const easing = 'var(--motion-ease-standard)';
+    const animationId = `${++treeAnimationSequence}`;
+
+    stopTreeFolderAnimation(folder);
+
+    folder.dataset.treeAnimationId = animationId;
+    folder.classList.add('is-animating');
+    children.style.overflow = 'hidden';
+    children.style.willChange = 'height, opacity';
+
+    if (shouldOpen) {
+      children.style.transition = '';
+      folder.open = true;
+      children.style.height = '0px';
+      children.style.opacity = '0';
+      children.getBoundingClientRect();
+      await waitForAnimationFrame(2);
+      children.style.transition =
+        `height ${duration}ms ${easing}, opacity ${duration}ms var(--motion-ease-standard)`;
+      children.style.height = `${children.scrollHeight}px`;
+      children.style.opacity = '1';
+      await waitForHeightTransition(folder, children, duration);
+    } else {
+      children.style.transition =
+        `height ${duration}ms ${easing}, opacity ${duration}ms var(--motion-ease-standard)`;
+      children.style.height = `${Math.max(currentHeight, children.scrollHeight)}px`;
+      children.style.opacity = currentOpacity;
+      children.getBoundingClientRect();
+      children.style.height = '0px';
+      children.style.opacity = '0';
+      await waitForHeightTransition(folder, children, duration);
+
+      if (folder.dataset.treeAnimationId !== animationId) {
+        return;
+      }
+
+      folder.open = false;
+    }
+
+    if (folder.dataset.treeAnimationId !== animationId) {
+      return;
+    }
+
+    children.style.height = '';
+    children.style.opacity = '';
+    children.style.overflow = '';
+    children.style.willChange = '';
+    children.style.transition = '';
+    folder.classList.remove('is-animating');
+    delete folder.dataset.treeAnimationId;
+  }
+
+  async function animateAllFolders(shouldOpen) {
+    const requestId = ++treeBatchRequestId;
+    const orderedFolders = shouldOpen ? treeFolders : [...treeFolders].reverse();
+    treePersistenceSuspendCount += 1;
+
+    try {
+      await Promise.all(
+        orderedFolders.map((folder, index) =>
+          animateTreeFolder(
+            folder,
+            shouldOpen,
+            Math.min(index * treeBatchStagger, treeBatchDelayCap),
+            requestId,
+          ),
+        ),
+      );
+    } finally {
+      treePersistenceSuspendCount = Math.max(0, treePersistenceSuspendCount - 1);
+
+      if (requestId === treeBatchRequestId && treePersistenceSuspendCount === 0) {
+        saveOpenFolders();
+      }
+    }
+  }
+
+  applyPersistedOpenFolders();
+  applyLastOpenedTreeHighlight();
+  window.addEventListener('pageshow', applyPersistedOpenFolders);
+  window.addEventListener('pageshow', applyLastOpenedTreeHighlight);
+
+  treePosts.forEach((post) => {
+    post.addEventListener('click', () => {
+      persistLastOpenedBlogPath(post.href);
+    });
+  });
+
+  treeFolders.forEach((folder) => {
+    const summary = getTreeSummary(folder);
+
+    summary?.addEventListener('click', (event) => {
+      event.preventDefault();
+      animateTreeFolder(folder, !folder.open);
+    });
+
+    summary?.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+
+      event.preventDefault();
+      animateTreeFolder(folder, !folder.open);
+    });
+
+    folder.addEventListener('toggle', () => {
+      if (treePersistenceSuspendCount > 0) return;
+      saveOpenFolders();
+    });
+  });
+
+  expandAllButton?.addEventListener('click', (event) => {
+    event.preventDefault();
+    animateAllFolders(true);
+  });
+
+  collapseAllButton?.addEventListener('click', (event) => {
+    event.preventDefault();
+    animateAllFolders(false);
+  });
+</script>

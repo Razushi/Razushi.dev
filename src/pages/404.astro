@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="404 - Not Found" mainClass="site-main--post">
+  <section class="page-heading">
+    <h1>404 - This page doesn't exist or has been moved.</h1>
+  </section>
+  <div class="blog-listing__rule" aria-hidden="true"></div>
+  <nav class="not-found__nav">
+    <a class="home-feed__action" href="/">
+      <span class="home-feed__action-icon home-feed__icon--left" aria-hidden="true">←</span>
+      <span>Home</span>
+    </a>
+    <a class="home-feed__action" href="/blog">
+      <span>Blog</span>
+      <span class="home-feed__action-icon home-feed__icon--right" aria-hidden="true">→</span>
+    </a>
+  </nav>
+</BaseLayout>
+
+<style>
+  .not-found__nav {
+    display: flex;
+    gap: var(--spacing-4);
+    margin-top: var(--spacing-2);
+  }
+</style>

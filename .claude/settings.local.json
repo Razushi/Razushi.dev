@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(///wsl.localhost/Ubuntu/home/razushi/Projects/Vestige/**)",
+      "Read(///wsl.localhost/Ubuntu/mnt/**)",
+      "Read(//c/Users/Razushi/Projects/Vestige/**)",
+      "Read(///wsl.localhost/Ubuntu//**)",
+      "Read(///wsl.localhost/Ubuntu/home/razushi/Projects/Vestige/src/**)",
+      "Read(///wsl.localhost/Ubuntu/home/razushi/Projects/Vestige/src/lib/**)",
+      "Read(///wsl.localhost/Ubuntu/home/razushi/Projects/**)",
+      "Bash(npx astro:*)",
+      "Bash(wsl:*)"
+    ]
+  }
+}

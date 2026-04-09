@@ -1,0 +1,164 @@
+---
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/layout.css';
+import '../styles/components.css';
+import '../styles/prose.css';
+import '../styles/utilities.css';
+
+import Header from '../components/layout/Header.astro';
+import CustomCursor from '../components/layout/CustomCursor.svelte';
+import ViewportMarks from '../components/layout/ViewportMarks.astro';
+import Breadcrumbs from '../components/navigation/Breadcrumbs.astro';
+import { siteConfig } from '../data/site';
+import type { Breadcrumb } from '../lib/blog/tree';
+
+const {
+  title = siteConfig.title,
+  description = siteConfig.description,
+  breadcrumbs = [],
+  mainClass = '',
+}: {
+  title?: string;
+  description?: string;
+  breadcrumbs?: Breadcrumb[];
+  mainClass?: string;
+} = Astro.props;
+
+const pageTitle = title === siteConfig.title ? title : `${title} | ${siteConfig.name}`;
+const isHomePage = mainClass.split(/\s+/).includes('site-main--home');
+const shouldAnimatePageEnter = !isHomePage;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteConfig.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={Astro.url.href} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <style is:inline>
+      html {
+        background-color: #181818;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background-color: #181818;
+      }
+
+      .site-shell {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        background-color: #181818;
+        background-image: radial-gradient(
+          ellipse 60% 60% at 100% 0%,
+          rgb(233 210 180 / 13%) 0%,
+          rgb(233 210 180 / 6%) 33%,
+          rgb(233 210 180 / 3%) 66%,
+          transparent 100%
+        );
+        background-repeat: no-repeat;
+        background-position: top right;
+        background-size: 180rem 180rem;
+      }
+
+      .post-shell__footer {
+        border-top: none;
+      }
+
+      .post-header h1,
+      .page-heading h1,
+      .hero-panel h1,
+      .post-list h3,
+      .prose-flow h1,
+      .prose-flow h2,
+      .prose-flow h3,
+      .prose-flow h4 {
+        font-family: 'Geist', system-ui, sans-serif !important;
+        font-weight: 500 !important;
+      }
+
+      .breadcrumbs [aria-current='page'] {
+        color: var(--text-muted);
+      }
+
+      @media (prefers-reduced-motion: no-preference) {
+        body[data-page-enter='pending'] .site-main:not(.site-main--home) > .post-gutter-rail,
+        body[data-page-enter='pending'] .site-main:not(.site-main--home) .site-main__inner > * {
+          opacity: 0;
+          transform: none !important;
+          filter: blur(10px);
+          animation: none !important;
+        }
+      }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      href="https://fonts.gstatic.com/s/redditmono/v5/oPWL_kRmmu4oQ88oo13o4-rLRjs.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Noto+Sans+SC:wght@400;500;700&family=Reddit+Mono:wght@400;500;600;700&family=Share+Tech&family=Victor+Mono:ital,wght@0,400;0,500;1,300;1,400;1,500&display=swap"
+    />
+    <title>{pageTitle}</title>
+  </head>
+
+  <body data-page-enter={shouldAnimatePageEnter ? 'pending' : undefined}>
+    <div class="site-shell">
+      <CustomCursor client:load />
+      <ViewportMarks />
+      <Header currentPath={Astro.url.pathname} />
+
+      <main id="content" class:list={['site-main', mainClass]}>
+        <slot name="main-floating" />
+        <div class="site-container site-main__inner">
+          <Breadcrumbs items={breadcrumbs} />
+          <slot />
+        </div>
+      </main>
+    </div>
+
+    {
+      shouldAnimatePageEnter && (
+        <script is:inline>
+          const runPageEnter = () => {
+            const body = document.body;
+            if (!body || body.dataset.pageEnter !== 'pending') return;
+
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+              body.dataset.pageEnter = 'ready';
+              return;
+            }
+
+            window.requestAnimationFrame(() => {
+              window.requestAnimationFrame(() => {
+                body.dataset.pageEnter = 'ready';
+              });
+            });
+          };
+
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', runPageEnter, { once: true });
+          } else {
+            runPageEnter();
+          }
+        </script>
+      )
+    }
+  </body>
+</html>
