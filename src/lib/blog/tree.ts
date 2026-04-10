@@ -1,4 +1,4 @@
-import type { BlogEntry } from './content';
+import type { BlogEntry, BlogEntryWithDates } from './content';
 import { joinSlugSegments, slugifySegment, splitContentPath } from './paths';
 
 export interface Breadcrumb {
@@ -8,6 +8,7 @@ export interface Breadcrumb {
 
 export interface BlogPostRecord {
   entry: BlogEntry;
+  updatedDate: Date | null;
   rawSegments: string[];
   slugSegments: string[];
   slugPath: string;
@@ -54,7 +55,7 @@ const createFolderMostRecentDateMap = (records: BlogPostRecord[]) => {
   const dates = new Map<string, Date>();
 
   for (const record of records) {
-    const date = record.entry.data.updatedDate ?? record.entry.data.pubDate;
+    const date = record.updatedDate ?? record.entry.data.pubDate;
     if (!date) continue;
 
     for (let index = 1; index < record.slugSegments.length; index += 1) {
@@ -69,8 +70,8 @@ const createFolderMostRecentDateMap = (records: BlogPostRecord[]) => {
   return dates;
 };
 
-export function createBlogRecords(entries: BlogEntry[]) {
-  return entries.map((entry) => {
+export function createBlogRecords(entries: BlogEntryWithDates[]) {
+  return entries.map(({ entry, updatedDate }) => {
     const rawSegments = splitContentPath(entry.id);
     const slugSegments = rawSegments.map(slugifySegment);
     const slugPath = joinSlugSegments(slugSegments);
@@ -79,6 +80,7 @@ export function createBlogRecords(entries: BlogEntry[]) {
 
     return {
       entry,
+      updatedDate,
       rawSegments,
       slugSegments,
       slugPath,

@@ -1,10 +1,3 @@
----
-title: Cybersecurity Fundamentals
-description: Introductory notes on common attacks, security goals, threat sources, and basic defensive thinking.
-summary: Cybersecurity basics, attack types, risk, CIA triad, general foundations.
-pubDate: 2024-08-21
----
-
 ```
 Notes/
 ├── Cybersecurity

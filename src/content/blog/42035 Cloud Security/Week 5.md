@@ -1,10 +1,3 @@
----
-title: Cloud Legal, Risk and Compliance
-description: Lecture notes on cloud risk, legal obligations, compliance, and the customer-provider split.
-summary: Cloud risk, legal mess, compliance, provider vs customer responsibilities. Lots of governance notes.
-pubDate: 2025-01-19
----
-
 
 # LEGAL, RISK, AND COMPLIANCE
 References:

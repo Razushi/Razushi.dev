@@ -9,7 +9,9 @@ import { getReadingTimeLabel } from '../lib/blog/reading';
 import { getBlogEntries } from '../lib/blog/content';
 import { createBlogRecords } from '../lib/blog/tree';
 
-const latestPosts = createBlogRecords(await getBlogEntries()).slice(0, 3);
+const latestPosts = createBlogRecords(await getBlogEntries())
+  .filter((post) => post.entry.data.pubDate)
+  .slice(0, 3);
 const emailHref = `mailto:${siteConfig.email.replace(' [at] ', '@')}`;
 const matrixHref = `https://matrix.to/#/${siteConfig.matrix}`;
 ---
@@ -75,7 +77,6 @@ const matrixHref = `https://matrix.to/#/${siteConfig.matrix}`;
             <div class="post-list__body">
               <p class="post-list__meta">{[
                 `Published ${formatDate(post.entry.data.pubDate)}`,
-                post.entry.data.updatedDate ? `Updated ${formatDate(post.entry.data.updatedDate)}` : null,
                 getReadingTimeLabel(post.entry.body),
               ].filter(Boolean).join(' | ')}</p>
               <h3>{post.displayTitle}</h3>

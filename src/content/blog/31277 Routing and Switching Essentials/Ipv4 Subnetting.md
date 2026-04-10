@@ -1,10 +1,3 @@
----
-title: IPv4 Subnetting and Addressing
-description: A compact set of subnetting notes covering masks, ranges, broadcast addresses and private space.
-summary: IPv4 subnetting, address ranges, /24 to /25 splits, quick cheatsheet stuff.
-pubDate: 2024-11-02
----
-
 # IPv4 Subnetting & Addressing
 
 ## 1. Understanding Subnet Masks & /24

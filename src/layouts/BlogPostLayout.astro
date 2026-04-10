@@ -28,8 +28,8 @@ const {
 } = Astro.props as Props;
 
 const metadataItems = [
-  `Published ${formatDate(post.entry.data.pubDate)}`,
-  post.entry.data.updatedDate ? `Updated ${formatDate(post.entry.data.updatedDate)}` : null,
+  post.entry.data.pubDate ? `Published ${formatDate(post.entry.data.pubDate)}` : null,
+  post.updatedDate ? `Updated ${formatDate(post.updatedDate)}` : null,
   getReadingTimeLabel(post.entry.body),
 ].filter(Boolean);
 ---
@@ -42,14 +42,16 @@ const metadataItems = [
 >
   <aside slot="main-floating" class="post-gutter-rail">
     <dl class="post-gutter-meta">
-      <div>
-        <dt>Published</dt>
-        <dd>{formatDate(post.entry.data.pubDate)}</dd>
-      </div>
-      {post.entry.data.updatedDate && (
+      {post.entry.data.pubDate && (
+        <div>
+          <dt>Published</dt>
+          <dd>{formatDate(post.entry.data.pubDate)}</dd>
+        </div>
+      )}
+      {post.updatedDate && (
         <div>
           <dt>Updated</dt>
-          <dd>{formatDate(post.entry.data.updatedDate)}</dd>
+          <dd>{formatDate(post.updatedDate)}</dd>
         </div>
       )}
       <div>

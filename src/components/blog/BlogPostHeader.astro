@@ -1,4 +1,5 @@
 ---
+import { formatDate } from '../../lib/blog/dates';
 import type { BlogPostRecord } from '../../lib/blog/tree';
 
 interface Props {
@@ -6,8 +7,16 @@ interface Props {
 }
 
 const { post } = Astro.props as Props;
+const { pubDate } = post.entry.data;
+const { updatedDate } = post;
 ---
 
 <header class="post-header">
   <h1>{post.displayTitle}</h1>
+  {(pubDate || updatedDate) && (
+    <p class="post-header__meta">
+      {pubDate && <span>Published {formatDate(pubDate)}</span>}
+      {updatedDate && <span>Updated {formatDate(updatedDate)}</span>}
+    </p>
+  )}
 </header>

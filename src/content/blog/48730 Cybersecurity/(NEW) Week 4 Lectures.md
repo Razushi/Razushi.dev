@@ -1,10 +1,3 @@
----
-title: TLS, HTTPS and Network Attacks
-description: Notes on TLS internals, handshake flow, protocol weaknesses, and common network-layer attacks.
-summary: TLS, HTTPS, ARP, TCP attacks, handshake flow, downgrade issues. Network security notes.
-pubDate: 2024-10-31
----
-
 ```plaintext
 Notes/
 ├── TLS Overview and Key Exchange

@@ -1,10 +1,3 @@
----
-title: Graphs, DAGs and Topological Sort
-description: Notes on directed graphs, cycle detection and topological sort.
-summary: Directed graphs, job scheduling, DFS, topo sort. Mostly graph basics.
-pubDate: 2024-10-14
----
-
 ## Job scheduling and topological sort
 
 Introduction to Directed Graphs

@@ -9,7 +9,10 @@
       "Read(///wsl.localhost/Ubuntu/home/razushi/Projects/Vestige/src/lib/**)",
       "Read(///wsl.localhost/Ubuntu/home/razushi/Projects/**)",
       "Bash(npx astro:*)",
-      "Bash(wsl:*)"
+      "Bash(wsl:*)",
+      "Bash(git -C /c/Users/Razushi/Projects/Vestige log --pretty=format:\"COMMIT %aI\" --name-only --diff-filter=ACRMT)",
+      "Bash(git -C /mnt/c/Users/Razushi/Projects/Vestige log --pretty=format:\"COMMIT %aI\" --name-only --diff-filter=ACRMT)",
+      "Bash(git:*)"
     ]
   }
 }

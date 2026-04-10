@@ -25,3 +25,10 @@ pnpm-debug.log*
 
 # local reference docs
 docs/
+
+# nix
+result
+.direnv
+
+# local claude code config
+.claude/settings.local.json

@@ -1,10 +1,3 @@
----
-title: Linux Users, Groups and Password Files
-description: Notes on `/etc/passwd`, `/etc/shadow`, `/etc/group`, and basic user management on Linux.
-summary: Sysadmin for Linux users, groups, passwd, shadow, useradd, userdel. Core admin notes.
-pubDate: 2024-09-26
----
-
 /etc/passwd
 
 `username : password : uid : gid : full name of user : homedir : shell`

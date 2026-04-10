@@ -85,13 +85,13 @@ const { nodes } = Astro.props as Props;
           </svg>
         </span>
         <span class="tree-post__title">{node.label}</span>
-        {(node.record?.entry.data.pubDate || node.record?.entry.data.updatedDate) && (
+        {(node.record?.updatedDate || node.record?.entry.data.pubDate) && (
           <time
             class="tree-post__date"
-            datetime={(node.record?.entry.data.updatedDate ?? node.record?.entry.data.pubDate)?.toISOString()}
-            title={formatFullDate(node.record?.entry.data.updatedDate ?? node.record?.entry.data.pubDate)}
+            datetime={(node.record?.updatedDate ?? node.record?.entry.data.pubDate)?.toISOString()}
+            title={formatFullDate(node.record?.updatedDate ?? node.record?.entry.data.pubDate)}
           >
-            {formatRelativeDate(node.record?.entry.data.updatedDate ?? node.record?.entry.data.pubDate)}
+            {formatRelativeDate(node.record?.updatedDate ?? node.record?.entry.data.pubDate)}
           </time>
         )}
       </a>
