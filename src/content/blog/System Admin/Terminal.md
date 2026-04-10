@@ -1,3 +1,10 @@
+---
+title: Terminal Notes
+description: Terminal usage, markdown syntax, and shell tips.
+summary: Backticks, shell shortcuts, and general terminal muscle memory.
+pubDate: 2024-08-10
+---
+
 ## Markdown Syntax & Backticks  
 The backtick ` is used at the start and end of a term is outdated for general use.  
 

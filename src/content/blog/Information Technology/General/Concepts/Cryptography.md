@@ -1,3 +1,10 @@
+---
+title: Cryptography
+description: Galois fields, AES internals, and foundational crypto concepts.
+summary: GF(2^8) operations, AES substitution, and core cryptographic primitives.
+pubDate: 2024-07-22
+---
+
 ## Galois Field Operations and Cryptography
 
 ### Overview:

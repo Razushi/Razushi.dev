@@ -1,3 +1,10 @@
+---
+title: Identity and Access Management
+description: SSH, PAM, LDAP, and local auth — how systems verify who you are.
+summary: How connections authenticate, PAM modules, LDAP integration, and local auth flows.
+pubDate: 2024-09-20
+---
+
 # How does a connection happen?
 SSH, with a password/cert/key, its just all how we assert we are who we are.
 
