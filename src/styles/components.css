@@ -159,8 +159,8 @@ html[data-theme='light'] .site-header {
 
 .theme-toggle__icon {
   display: block;
-  width: 15px;
-  height: 15px;
+  width: var(--spacing-6);
+  height: var(--spacing-6);
 }
 
 /* In dark mode (no data-theme attr): show sun, hide moon */
@@ -280,9 +280,6 @@ html[data-theme='light'] .theme-toggle__icon--moon {
 
 .home-hero-title__char {
   display: inline-flex;
-  overflow: hidden;
-  padding-block: 0.12em;
-  margin-block: -0.12em;
 }
 
 .home-hero-title__char-inner {
