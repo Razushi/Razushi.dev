@@ -1,3 +1,16 @@
+html[data-theme='light'] .site-header {
+  background: color-mix(in srgb, #181818 92%, transparent);
+  border-bottom-color: #252525;
+  box-shadow: 0 6px 13px color-mix(in srgb, #181818 80%, transparent);
+  --text-primary: #faf9f6;
+  --text-muted: #e9d2b4;
+  --border-subtle: #252525;
+  --color-text: #faf9f6;
+  --color-text-muted: #e9d2b4;
+  --color-border-subtle: #252525;
+  --color-accent: #e6956d;
+}
+
 .site-header {
   position: sticky;
   top: 0;
@@ -13,13 +26,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: var(--spacing-4);
-  padding-block: var(--spacing-4);
+  gap: 16px;
+  padding-block: 16px;
 }
 
 .site-header__inner {
   width: 100%;
-  padding-inline: var(--spacing-6);
+  padding-inline: 24px;
 }
 
 .site-brand {
@@ -49,11 +62,11 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--spacing-3);
+  gap: 12px;
 }
 
 .site-nav>.site-nav__link+.site-nav__link {
-  margin-left: var(--spacing-6);
+  margin-left: 24px;
 }
 
 .site-nav__link,
@@ -72,8 +85,8 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  min-height: var(--spacing-6);
-  padding: 0 0 var(--spacing-1);
+  min-height: 24px;
+  padding: 0 0 4px;
   border: 0;
   color: var(--color-text-muted);
   line-height: 1;
@@ -118,6 +131,50 @@
 .site-nav__link--active::after {
   transform: scaleX(1);
   transition: none;
+}
+
+.site-header__end {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-6);
+  height: var(--spacing-6);
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+  color: var(--color-text);
+}
+
+.theme-toggle__icon {
+  display: block;
+  width: 15px;
+  height: 15px;
+}
+
+/* In dark mode (no data-theme attr): show sun, hide moon */
+.theme-toggle__icon--moon {
+  display: none;
+}
+
+/* In light mode: hide sun, show moon */
+html[data-theme='light'] .theme-toggle__icon--sun {
+  display: none;
+}
+
+html[data-theme='light'] .theme-toggle__icon--moon {
+  display: block;
 }
 
 .site-footer {
@@ -214,6 +271,10 @@
     0 0 4px rgb(0 0 0 / 1),
     0 0 8px rgb(0 0 0 / 1),
     0 0 14px rgb(0 0 0 / 0.95);
+}
+
+html[data-theme='light'] .home-intro h1 {
+  text-shadow: none;
 }
 
 .home-intro__primary,

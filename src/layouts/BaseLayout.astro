@@ -44,9 +44,29 @@ const shouldAnimatePageEnter = !isHomePage;
     <meta property="og:url" content={Astro.url.href} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var preferLight = !stored && window.matchMedia('(prefers-color-scheme: light)').matches;
+          if (stored === 'light' || preferLight) {
+            document.documentElement.setAttribute('data-theme', 'light');
+          }
+        } catch (e) {}
+      })();
+    </script>
     <style is:inline>
+      :root {
+        --spacing-1: 4px;
+        --spacing-3: 12px;
+        --spacing-4: 16px;
+        --spacing-6: 24px;
+      }
+
       html {
         background-color: #181818;
+        color-scheme: dark;
+        scrollbar-gutter: stable;
       }
 
       body {
@@ -72,9 +92,7 @@ const shouldAnimatePageEnter = !isHomePage;
         background-size: 180rem 180rem;
       }
 
-      .post-shell__footer {
-        border-top: none;
-      }
+      .post-shell__footer { border-top: none; }
 
       .post-header h1,
       .page-heading h1,
@@ -88,8 +106,94 @@ const shouldAnimatePageEnter = !isHomePage;
         font-weight: 500 !important;
       }
 
-      .breadcrumbs [aria-current='page'] {
-        color: var(--text-muted);
+      /* Light mode backgrounds */
+      html[data-theme='light'] {
+        background-color: #f0ede9;
+        color-scheme: light;
+      }
+      html[data-theme='light'] body { background-color: #f0ede9; }
+      html[data-theme='light'] .site-shell {
+        background-color: #f0ede9;
+        background-image: radial-gradient(
+          ellipse 60% 60% at 100% 0%,
+          rgb(140 90 53 / 8%) 0%,
+          rgb(140 90 53 / 4%) 33%,
+          rgb(140 90 53 / 2%) 66%,
+          transparent 100%
+        );
+      }
+
+      /* Header always dark in light mode */
+      html[data-theme='light'] .site-header {
+        background: rgba(24, 24, 24, 0.92);
+        border-bottom-color: #252525;
+        box-shadow: 0 6px 13px rgba(24, 24, 24, 0.8);
+      }
+
+      /* Critical header layout — locked in before components.css loads */
+      .site-header__inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        gap: 16px;
+        padding: 16px 24px;
+      }
+      .site-brand { flex: 0 0 auto; }
+      .site-header__end { display: flex; align-items: center; gap: 24px; }
+      .site-nav { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+      .site-nav > .site-nav__link + .site-nav__link { margin-left: 24px; }
+
+      /* Nav link colours and typography — must exactly match components.css
+         so there is zero visual difference before/after external CSS loads */
+      .site-nav__link {
+        color: #e9d2b4;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        min-height: 24px;
+        padding: 0 0 4px;
+        border: 0;
+        font-family: 'Reddit Mono', system-ui, sans-serif;
+        font-size: 0.875rem;
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        line-height: 1;
+      }
+      .site-nav__link--active { color: #e6956d; }
+
+      /* Theme toggle */
+      .theme-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 24px;
+        height: 24px;
+        border: none;
+        background: transparent;
+        padding: 0;
+        cursor: pointer;
+        color: #e9d2b4;
+      }
+
+      /* Icon visibility */
+      .theme-toggle__icon--moon { display: none; }
+      html[data-theme='light'] .theme-toggle__icon--sun { display: none; }
+      html[data-theme='light'] .theme-toggle__icon--moon { display: block; }
+
+      /* Theme transition */
+      html.theme-transitioning,
+      html.theme-transitioning *,
+      html.theme-transitioning *::before,
+      html.theme-transitioning *::after {
+        transition:
+          background-color 250ms ease,
+          color 250ms ease,
+          border-color 250ms ease,
+          box-shadow 250ms ease,
+          text-shadow 250ms ease !important;
       }
 
       @media (prefers-reduced-motion: no-preference) {
