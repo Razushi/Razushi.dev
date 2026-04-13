@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import AtSignIcon from '../components/icons/AtSignIcon.astro';
 import GitHubIcon from '../components/icons/GitHubIcon.astro';
 import MailIcon from '../components/icons/MailIcon.astro';
+import HomeHeroTitle from '../components/home/HomeHeroTitle.astro';
 import { siteConfig } from '../data/site';
 import { formatDate } from '../lib/blog/dates';
 import { getReadingTimeLabel } from '../lib/blog/reading';
@@ -21,7 +22,7 @@ const matrixHref = `https://matrix.to/#/${siteConfig.matrix}`;
     <div class="home-intro">
       <div class="home-intro__content">
         <div class="home-intro__primary">
-          <h1>EXPEDITION SURVIVED</h1>
+          <HomeHeroTitle />
           <p class="home-intro__lede">
             I did it. I survived UTS.
           </p>

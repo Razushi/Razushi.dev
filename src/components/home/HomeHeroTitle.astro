@@ -1,0 +1,21 @@
+---
+interface Props {
+  lines?: string[];
+  label?: string;
+}
+
+const { lines = ['EXPEDITION', 'SURVIVED'], label = lines.join(' ') }: Props = Astro.props;
+---
+
+<h1 class="home-hero-title" aria-label={label}>
+  <span class="visually-hidden">{label}</span>
+  {lines.map((line, lineIndex) => (
+    <span class="home-hero-title__line" data-line={lineIndex + 1} aria-hidden="true">
+      {Array.from(line).map((character) => (
+        <span class="home-hero-title__char">
+          <span class="home-hero-title__char-inner">{character}</span>
+        </span>
+      ))}
+    </span>
+  ))}
+</h1>
