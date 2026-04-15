@@ -205,6 +205,25 @@ html[data-theme="light"] {
   --background-stage-bottom: #f0ede9;
 }
 
+/* Code blocks always render with dark-mode colours, regardless of theme.
+   Token colours like yellow (#efe669) and cyan (#93e3e3) are designed for
+   dark backgrounds and become unreadable on a light surface. */
+html[data-theme="light"] .code-block,
+html[data-theme="light"] .astro-code {
+  --code-bg: #181818;
+  --code-border: #505050;
+  --code-text: #abb2bf;
+  --code-comment: #7f848e;
+  --code-keyword: #b58af7;
+  --code-string: #7cc55c;
+  --code-function: #369ef8;
+  /* Used in .code-block__header background mix */
+  --surface-highlight: #343434;
+  /* Used in .code-block__header and copy button text */
+  --color-text-muted: #e9d2b4;
+  --color-text-accent: #e6956d;
+}
+
 :lang(ko),
 :lang(ja),
 :lang(zh) {
