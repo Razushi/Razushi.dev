@@ -1,7 +1,6 @@
 ---
 title: Identity and Access Management
 description: SSH, PAM, LDAP, and local auth — how systems verify who you are.
-summary: How connections authenticate, PAM modules, LDAP integration, and local auth flows.
 pubDate: 2024-09-20
 ---
 

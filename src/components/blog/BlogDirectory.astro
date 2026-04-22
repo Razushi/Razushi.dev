@@ -50,8 +50,8 @@ const {
                 </time>
               )}
               <h3>{post.displayTitle}</h3>
-              {(post.entry.data.summary ?? post.entry.data.description) && (
-                <p>{post.entry.data.summary ?? post.entry.data.description}</p>
+              {post.entry.data.description && (
+                <p>{post.entry.data.description}</p>
               )}
             </div>
             <span class="post-list__arrow" aria-hidden="true">→</span>

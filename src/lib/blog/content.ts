@@ -72,7 +72,6 @@ export async function getBlogEntries(): Promise<BlogEntryWithDates[]> {
     entries.filter(hasRenderableBody).map(async (entry) => ({
       entry,
       updatedDate:
-        entry.data.updatedDate ??
         gitDates.get(entry.id) ??
         (await getFileMtime(entry.id)),
     })),

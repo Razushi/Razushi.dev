@@ -81,7 +81,7 @@ const matrixHref = `https://matrix.to/#/${siteConfig.matrix}`;
                 getReadingTimeLabel(post.entry.body),
               ].filter(Boolean).join(' | ')}</p>
               <h3>{post.displayTitle}</h3>
-              <p>{post.entry.data.summary ?? post.entry.data.description}</p>
+              <p>{post.entry.data.description}</p>
             </div>
             <span class="post-list__arrow" aria-hidden="true">→</span>
           </a>

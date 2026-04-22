@@ -1,4 +1,5 @@
-```You are given a PDF (lecture slides, notes, etc). Your task: extract **all text** into clean, structured markdown notes and return it in a single markdown (.md) file. 
+```
+You are given a PDF (lecture slides, notes, etc). Your task: extract **all text** into clean, structured markdown notes and return it in a single markdown (.md) file. 
 
 You will also send a brief preview.
 

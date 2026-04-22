@@ -1,7 +1,6 @@
 ---
 title: Terminal Notes
 description: Terminal usage, markdown syntax, and shell tips.
-summary: Backticks, shell shortcuts, and general terminal muscle memory.
 pubDate: 2024-08-10
 ---
 

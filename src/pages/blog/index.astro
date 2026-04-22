@@ -10,7 +10,7 @@ const tree = buildBlogTree(records);
 
 const searchIndex = records.map((record) => ({
   title: record.displayTitle,
-  summary: record.entry.data.summary ?? record.entry.data.description ?? '',
+  summary: record.entry.data.description ?? '',
   body: record.entry.body ? stripMarkdown(record.entry.body) : '',
   path: `blog / ${record.slugSegments.join(' / ')}`,
   slugLeaf: record.slugSegments.at(-1) ?? '',

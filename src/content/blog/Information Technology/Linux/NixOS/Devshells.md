@@ -1,7 +1,6 @@
 ---
 title: Nix Devshells
 description: Using nix develop to create reproducible development environments.
-summary: Bootstrapping dev environments with Nix devshells and flakes.
 pubDate: 2024-11-15
 ---
 

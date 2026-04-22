@@ -1,7 +1,6 @@
 ---
 title: ZLUDA
 description: AMD's CUDA-compatible runtime — history, status, and current state.
-summary: ZLUDA is AMD's drop-in CUDA replacement. Project history and revival.
 pubDate: 2024-06-01
 ---
 
